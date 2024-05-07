@@ -43,13 +43,45 @@ list(APPEND DFN_SOURCES ${DFN_sources})
 list(APPEND DFN_HEADERS ${DFN_headers})
 list(APPEND DFN_INCLUDE ${DFN_includes})
 
+add_subdirectory(src)
+
+list(APPEND ${CMAKE_PROJECT_NAME}_sources ${src_sources})
+list(APPEND ${CMAKE_PROJECT_NAME}_headers ${src_headers})
+list(APPEND ${CMAKE_PROJECT_NAME}_includes ${src_includes})
+
+add_subdirectory(src_test)
+
+list(APPEND ${CMAKE_PROJECT_NAME}_test_sources ${src_test_sources})
+list(APPEND ${CMAKE_PROJECT_NAME}_test_headers ${src_test_headers})
+list(APPEND ${CMAKE_PROJECT_NAME}_test_includes ${src_test_includes})
+
 # Create executable
 ################################################################################
-add_executable(${PROJECT_NAME}
-	main.cpp
-	${DFN_SOURCES}
-    ${DFN_HEADERS})
+add_executable(${CMAKE_PROJECT_NAME} main.cpp
+    ${${CMAKE_PROJECT_NAME}_sources}
+    ${${CMAKE_PROJECT_NAME}_headers})
 
-target_link_libraries(${PROJECT_NAME} ${DFN_LINKED_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${DFN_INCLUDE})
-target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
+    ${${CMAKE_PROJECT_NAME}_LINKED_LIBRARIES})
+
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
+    ${${CMAKE_PROJECT_NAME}_includes})
+
+
+target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -fPIC)
+
+
+add_executable(${CMAKE_PROJECT_NAME}_test main_test.cpp
+    ${${CMAKE_PROJECT_NAME}_sources}
+    ${${CMAKE_PROJECT_NAME}_headers}
+    ${${CMAKE_PROJECT_NAME}_test_sources}
+    ${${CMAKE_PROJECT_NAME}_test_headers})
+
+target_link_libraries(${CMAKE_PROJECT_NAME}_test PUBLIC
+    ${${CMAKE_PROJECT_NAME}_LINKED_LIBRARIES})
+
+target_include_directories(${CMAKE_PROJECT_NAME}_test PUBLIC
+    ${${CMAKE_PROJECT_NAME}_includes}
+    ${${CMAKE_PROJECT_NAME}_test_includes})
+
+target_compile_options(${CMAKE_PROJECT_NAME}_test PUBLIC -fPIC)
