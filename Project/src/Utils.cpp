@@ -121,6 +121,62 @@ bool ImportFratture(const string &filename,
     return true;
 }
 
+Vector3d calcolaCentroide(vector<Vector3d>& vertici)
+{
+    //const auto& vertici = DFN.coordinateVertici[idFrattura];   //richiamo delle coordinate dei vertici relativia frattura di Id dato
+    Vector3d centroide = Vector3d::Zero();    //inizializzo a zero il centroide
+    int n = vertici.size();
+    for (const auto& vertex : vertici) {
+        centroide += vertex;
+    }
+    centroide /= n;                           //calcolo del centroide come somma dei vertici diviso il loro totale
+    return centroide;
+}
+
+bool CalcolaTracce(Struttura_DFN& DFN)
+{
+    for (unsigned int i = 0; i < DFN.numFratture; i++) // Modificato per evitare l'accesso out-of-bounds
+    {
+        const auto& verticiFrattura1 = DFN.coordinateVertici[DFN.Id_Fratture[i]];
+        const auto& verticiFrattura2 = DFN.coordinateVertici[DFN.Id_Fratture[i+1]];
+
+        // Controllo sulla distanza delle fratture:
+        Vector3d centroide1 = calcolaCentroide(DFN, DFN.Id_Fratture[i]);
+        Vector3d centroide2 = calcolaCentroide(DFN, DFN.Id_Fratture[i+1]);
+
+        double distanzaMax1 = 0;
+        for (unsigned int j = 0; j < verticiFrattura1.size(); j++) // Modificato per scorrere tutti i vertici di verticiFrattura1
+        {
+            double distanza = (verticiFrattura1[j] - centroide1).norm();
+            if (distanza > distanzaMax1)
+            {
+                distanzaMax1 = distanza; // Corretto per assegnare il valore massimo trovato
+            }
+        }
+
+        double distanzaMax2 = 0;
+        for (unsigned int j = 0; j < verticiFrattura2.size(); j++) // Modificato per scorrere tutti i vertici di verticiFrattura2
+        {
+            double distanza = (verticiFrattura2[j] - centroide2).norm();
+            if (distanza > distanzaMax2)
+            {
+                distanzaMax2 = distanza; // Corretto per assegnare il valore massimo trovato
+            }
+        }
+
+        // Controllo sulla distanza delle fratture:
+        double distanzaCentroidi = (centroide1 - centroide2).norm();
+
+        if ((distanzaMax1 + distanzaMax2) > distanzaCentroidi)
+        {
+            // Le fratture sono troppo lontane
+            return false; // Modificato per uscire dalla funzione in caso di fratture troppo distanti
+        }
+        // Se viene superato questo controllo posso procedere con il sistema lineare che mi calcoli le fratture:
+    }
+    return true; // Modificato per indicare che tutte le fratture sono state processate con successo
+}
+
 
 }
 
