@@ -55,6 +55,13 @@ list(APPEND ${CMAKE_PROJECT_NAME}_test_sources ${src_test_sources})
 list(APPEND ${CMAKE_PROJECT_NAME}_test_headers ${src_test_headers})
 list(APPEND ${CMAKE_PROJECT_NAME}_test_includes ${src_test_includes})
 
+# add file
+###############################################################################
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/DFN/FR3_data.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+
+
+
 # Create executable
 ################################################################################
 add_executable(${CMAKE_PROJECT_NAME} main.cpp
