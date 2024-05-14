@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include "Eigen/Eigen"
+#include "cmath"
 
 using namespace std;
 using namespace Eigen;
@@ -162,7 +163,7 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
     double distanzaMax1 = 0;
     for (unsigned int j = 0; j < poligono1.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
     {
-        double distanza = (poligono1[j] - centroide1).norm();
+        double distanza = (poligono1[j] - centroide1).squaredNorm();
         if (distanza > distanzaMax1)
         {
             distanzaMax1 = distanza; // Corretto per assegnare il valore massimo trovato
@@ -170,19 +171,56 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
     }
 
     double distanzaMax2 = 0;
-    for (unsigned int j = 0; j < poligono2.size(); j++) // Modificato per scorrere tutti i vertici di poligono2
+    for (unsigned int j = 0; j < poligono2.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
     {
-        double distanza = (poligono2[j] - centroide2).norm();
+        double distanza = (poligono2[j] - centroide2).squaredNorm();
         if (distanza > distanzaMax2)
         {
             distanzaMax2 = distanza; // Corretto per assegnare il valore massimo trovato
         }
     }
 
-    // Controllo sulla distanza delle fratture:
-    double distanzaCentroidi = (centroide1 - centroide2).norm();
+    double distanzaCentroidi = (centroide1 - centroide2).squaredNorm();
 
-    if ((distanzaMax1 + distanzaMax2) > distanzaCentroidi + tolleranza)
+    // // Controllo sulla distanza delle fratture:
+    // double distanzaCentroidi = 0;
+    // for (unsigned int j = 0; j < 3; j++){
+    //     distanzaCentroidi += pow((centroide1[j] - centroide2[j]), 2);
+    // }
+    // double distanzaMax1 = 0;
+    // for (unsigned int j = 0; j < poligono1.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
+    // {
+    //     double distanza = 0;
+    //     for (unsigned int k = 0; k < 3; k++){
+    //         distanza += pow((poligono1[j][k] - centroide1[k]), 2);
+    //     }
+    //     if (distanza > distanzaMax1)
+    //     {
+    //         distanzaMax1 = distanza; // Corretto per assegnare il valore massimo trovato
+    //     }
+    // }
+
+    // double distanzaMax2 = 0;
+    // for (unsigned int j = 0; j < poligono2.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
+    // {
+    //     double distanza = 0;
+    //     for (unsigned int k = 0; k < 3; k++){
+    //         distanza += pow((poligono2[j][k] - centroide2[k]), 2);
+    //     }
+    //     if (distanza > distanzaMax2)
+    //     {
+    //         distanzaMax2 = distanza; // Corretto per assegnare il valore massimo trovato
+    //     }
+    // }
+
+    // // Controllo sulla distanza delle fratture:
+    // double distanzaCentroidi = 0;
+    // for (unsigned int j = 0; j < 3; j++){
+    //     distanzaCentroidi += pow((centroide1[j] - centroide2[j]), 2);
+    // }
+
+
+    if ((distanzaMax1 + distanzaMax2 + tolleranza) > distanzaCentroidi)
     {
         // Le fratture si possono incontrare
         return true; // Modificato per uscire dalla funzione in caso di fratture vicine a sufficienza
