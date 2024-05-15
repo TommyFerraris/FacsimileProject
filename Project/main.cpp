@@ -24,10 +24,13 @@ int main() {
     cout << "Cenrtroide 1: (" << centroide1[0] << ";" << centroide1[1] << ";" << centroide1[2] << endl;
     cout << "Cenrtroide 2: (" << centroide2[0] << ";" << centroide2[1] << ";" << centroide2[2] << endl;
 
-    bool risposta01 = possibiliTracce(DFN.coordinateVertici[0], DFN.coordinateVertici[1], 1e-1);
-    bool risposta02 = possibiliTracce(DFN.coordinateVertici[0], DFN.coordinateVertici[2], 1e-1);
-    bool risposta12 = possibiliTracce(DFN.coordinateVertici[1], DFN.coordinateVertici[2], 1e-1);
+    bool risposta01 = possibiliTracce(DFN.coordinateVertici[0], DFN.coordinateVertici[1], 5e-1);
+    bool risposta02 = possibiliTracce(DFN.coordinateVertici[0], DFN.coordinateVertici[2], 5e-1);
+    bool risposta12 = possibiliTracce(DFN.coordinateVertici[1], DFN.coordinateVertici[2], 5e-1);
     cout << risposta01 << "; " << risposta02 << "; " << risposta12 << endl;
+
+    Vector3d normale = normalePoligono(DFN.coordinateVertici[0]);
+    cout << "Normale: (" << normale[0] << ";" << normale[1] << ";" << normale[2] << endl;
 
     // return 0;
 }

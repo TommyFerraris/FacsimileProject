@@ -12,25 +12,60 @@ using namespace Eigen;
 namespace DFN_Library{
 
 
-// bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
-// {
-//     if (ImportFratture(filename, DFN))
-//     {
-//         for (unsigned int i = 0; i < DFN.numFratture; i++) // Codice id della prima frattura
-//         {
-//             for (unsigned int j = i+1; j < DFN.numFratture; j++) // Codice id della seconda frattura
-//             {
-//                 if (possibiliTracce(DFN.coordinateVertici[i], DFN.coordinateVertici[j], 1e-5))
-//                 {
-//                     // qua funzione che mi calcoli la traccia e me la inserisca dentro la struttura
-//                 }
-//             }
+bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
+{
+    if (ImportFratture(filename, DFN))
+    {
+        unsigned int contatoreTraccia = 0;
 
-//         }
-//     }
+        for (unsigned int i = 0; i < DFN.numFratture; i++) // Codice id della prima frattura
+        {
+            for (unsigned int j = i+1; j < DFN.numFratture; j++) // Codice id della seconda frattura
+            {
+                if (possibiliTracce(DFN.coordinateVertici[i], DFN.coordinateVertici[j], 1e-5))
+                {
+                    Vector3d normaleFrattura_i = normalePoligono(DFN.coordinateVertici[i]);
+                    Vector3d normaleFrattura_j = normalePoligono(DFN.coordinateVertici[j]);
+                    Vector3d versoreTangente = normaleFrattura_i.cross(normaleFrattura_j);
+                    Matrix3d MatriceA;
+                    MatriceA.row(0) = normaleFrattura_i.transpose();
+                    MatriceA.row(1) = normaleFrattura_j.transpose();
+                    MatriceA.row(2) = versoreTangente.transpose();
 
-//     return false;
-// }
+                    double bi = normaleFrattura_i.transpose() * calcolaCentroide(DFN.coordinateVertici[i]);
+                    double bj = normaleFrattura_j.transpose() * calcolaCentroide(DFN.coordinateVertici[j]);
+                    Vector3d b = {bi, bj, 0};
+
+                    if (MatriceA.determinant() < 1e-9)
+                    {
+                        // non c'è una soluzione/intersezione tra i piani
+                        continue;
+                    }
+                    Vector3d puntoTraccia = MatriceA.fullPivLu().solve(b);
+
+                    unsigned int numPuntiTracce = 0;
+                    for(unsigned int k = 0; k < DFN.numVertici[i]; k++)
+                    {
+                        Vector3d vertice1 = DFN.coordinateVertici[i][k];
+                        Vector3d vertice2 = DFN.coordinateVertici[i][0];
+                        if (k != DFN.numVertici[i] - 1)
+                        {
+                            Vector3d vertice2 = DFN.coordinateVertici[i][k+1];
+                        }
+
+                        Matrix3d MatriceA1; // deve dicentare matrice 3x2
+                        MatriceA.row(0) = (vertice2-vertice1);
+                    }
+
+
+                }
+            }
+
+        }
+    }
+
+    return false;
+}
 
 bool ImportFratture(const string &filename,
                     Struttura_DFN& DFN)
@@ -227,6 +262,19 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
         // Se viene superato questo controllo posso procedere con il sistema lineare che mi calcoli le fratture
     }
     return false; // Modificato per indicare se le fratture sono troppo distanti
+}
+
+Vector3d normalePoligono(vector<Vector3d>& poligono)
+{
+    Vector3d punto0 = poligono[0];
+    Vector3d punto1 = poligono[1];
+    Vector3d punto2 = poligono[2];
+
+    Vector3d vettore1_0 = punto1 - punto0; // vettore che parte da p1 e arriva in p0
+    Vector3d vettore1_2 = punto1 - punto2; // vettore che parte da p1 e arriva in p2
+
+    Vector3d normale = (vettore1_0.cross(vettore1_2))/(vettore1_0.norm() * vettore1_2.norm());
+    return normale;
 }
 
 
