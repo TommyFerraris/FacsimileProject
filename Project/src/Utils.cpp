@@ -18,7 +18,7 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
     {
         unsigned int contatoreTraccia = 0;
 
-        for (unsigned int i = 0; i < DFN.numFratture; i++) // Codice id della prima frattura
+        for (unsigned int i = 0; i < DFN.numFratture - 1; i++) // Codice id della prima frattura
         {
             for (unsigned int j = i+1; j < DFN.numFratture; j++) // Codice id della seconda frattura
             {
@@ -44,6 +44,7 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
                     Vector3d puntoTraccia = MatriceA.fullPivLu().solve(b);
 
                     unsigned int numPuntiTracce = 0;
+                    array<Vector3d,2> puntiTraccia;
                     for(unsigned int k = 0; k < DFN.numVertici[i]; k++)
                     {
                         Vector3d vertice1 = DFN.coordinateVertici[i][k];
@@ -53,10 +54,53 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
                             Vector3d vertice2 = DFN.coordinateVertici[i][k+1];
                         }
 
-                        Matrix3d MatriceA1; // deve dicentare matrice 3x2
-                        MatriceA.row(0) = (vertice2-vertice1);
+                        MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
+                        MatriceA.col(0) = (vertice2-vertice1);
+                        MatriceA.col(1) = versoreTangente;
+                        Vector3d b1 = (puntoTraccia - vertice1);
+
+                        Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
+                        if (alphaBeta[0] >= 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        {
+                            Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
+                            puntiTraccia[numPuntiTracce] = Intersezione;
+                            numPuntiTracce += 1;
+                        }
                     }
 
+                    for(unsigned int k = 0; k < DFN.numVertici[j]; k++)
+                    {
+                        Vector3d vertice1 = DFN.coordinateVertici[j][k];
+                        Vector3d vertice2 = DFN.coordinateVertici[j][0];
+                        if (k != DFN.numVertici[j] - 1)
+                        {
+                            Vector3d vertice2 = DFN.coordinateVertici[j][k+1];
+                        }
+
+                        MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
+                        MatriceA.col(0) = (vertice2-vertice1);
+                        MatriceA.col(1) = versoreTangente;
+                        Vector3d b1 = (puntoTraccia - vertice1);
+
+                        Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
+                        if (alphaBeta[0] >= 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        {
+                            Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
+                            if (numPuntiTracce > 0){
+                                if (Intersezione != puntiTraccia[0]){
+                                    puntiTraccia[numPuntiTracce] = Intersezione;
+                                    numPuntiTracce += 1;
+                                }
+                            }
+                        }
+                    }
+
+                    DFN.numTracce += 1;
+                    DFN.Id_Traccia.push_back(contatoreTraccia);
+                    Vector2i fratture = {DFN.Id_Fratture[i], DFN.Id_Fratture[j]};
+                    DFN.Id_Fratture_Intersecanti.push_back(fratture);
+                    DFN.coordinateTraccia[contatoreTraccia] = puntiTraccia;
+                    contatoreTraccia += 1;
 
                 }
             }
