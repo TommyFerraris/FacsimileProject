@@ -5,6 +5,7 @@
 #include <vector>
 #include "Eigen/Eigen"
 #include "cmath"
+#include "algorithm"
 
 using namespace std;
 using namespace Eigen;
@@ -48,53 +49,60 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
                     for(unsigned int k = 0; k < DFN.numVertici[i]; k++)
                     {
                         Vector3d vertice1 = DFN.coordinateVertici[i][k];
-                        Vector3d vertice2 = DFN.coordinateVertici[i][0];
-                        if (k != DFN.numVertici[i] - 1)
-                        {
-                            vertice2 = DFN.coordinateVertici[i][k+1];
-                        }
+                        Vector3d vertice2 = DFN.coordinateVertici[i][(k + 1) % DFN.numVertici[i]];
 
                         MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
                         MatriceA1.col(0) = (vertice2-vertice1);
                         MatriceA1.col(1) = -versoreTangente;
+                        if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
+                        {
+                            // le due rette sono parallele e quindi le escludo
+                            continue;
+                        }
                         Vector3d b1 = (puntoTraccia - vertice1);
 
                         Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
-                        cout << alphaBeta[0] << endl;
-                        if (alphaBeta[0] > 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        if (numPuntiTracce < 2)
                         {
                             Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                            puntiTraccia[numPuntiTracce] = Intersezione;
-                            numPuntiTracce += 1;
+                            if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j]))
+                            {
+                                puntiTraccia[numPuntiTracce] = Intersezione;
+                                numPuntiTracce += 1;
+                            }
                         }
                     }
 
                     for(unsigned int k = 0; k < DFN.numVertici[j]; k++)
                     {
                         Vector3d vertice1 = DFN.coordinateVertici[j][k];
-                        Vector3d vertice2 = DFN.coordinateVertici[j][0];
-                        if (k != DFN.numVertici[j] - 1)
-                        {
-                            vertice2 = DFN.coordinateVertici[j][k+1];
-                        }
-
+                        Vector3d vertice2 = DFN.coordinateVertici[j][(k + 1) % DFN.numVertici[j]];
                         MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
                         MatriceA1.col(0) = (vertice2-vertice1);
                         MatriceA1.col(1) = -versoreTangente;
+                        if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
+                        {
+                            // le due rette sono parallele e quindi le escludo
+                            continue;
+                        }
                         Vector3d b1 = (puntoTraccia - vertice1);
 
                         Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
-                        if (alphaBeta[0] > 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        if (numPuntiTracce < 2)
                         {
                             Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                            if (numPuntiTracce == 0)
+                            if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i]))
                             {
-                                puntiTraccia[numPuntiTracce] = Intersezione;
-                                numPuntiTracce += 1;
-                            }
-                            else{
+                                if (numPuntiTracce == 0)
+                                {
                                     puntiTraccia[numPuntiTracce] = Intersezione;
                                     numPuntiTracce += 1;
+                                }
+                                else
+                                {
+                                    puntiTraccia[numPuntiTracce] = Intersezione;
+                                    numPuntiTracce += 1;
+                                }
                             }
                         }
                     }
@@ -265,44 +273,6 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
 
     double distanzaCentroidi = (centroide1 - centroide2).squaredNorm();
 
-    // // Controllo sulla distanza delle fratture:
-    // double distanzaCentroidi = 0;
-    // for (unsigned int j = 0; j < 3; j++){
-    //     distanzaCentroidi += pow((centroide1[j] - centroide2[j]), 2);
-    // }
-    // double distanzaMax1 = 0;
-    // for (unsigned int j = 0; j < poligono1.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
-    // {
-    //     double distanza = 0;
-    //     for (unsigned int k = 0; k < 3; k++){
-    //         distanza += pow((poligono1[j][k] - centroide1[k]), 2);
-    //     }
-    //     if (distanza > distanzaMax1)
-    //     {
-    //         distanzaMax1 = distanza; // Corretto per assegnare il valore massimo trovato
-    //     }
-    // }
-
-    // double distanzaMax2 = 0;
-    // for (unsigned int j = 0; j < poligono2.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
-    // {
-    //     double distanza = 0;
-    //     for (unsigned int k = 0; k < 3; k++){
-    //         distanza += pow((poligono2[j][k] - centroide2[k]), 2);
-    //     }
-    //     if (distanza > distanzaMax2)
-    //     {
-    //         distanzaMax2 = distanza; // Corretto per assegnare il valore massimo trovato
-    //     }
-    // }
-
-    // // Controllo sulla distanza delle fratture:
-    // double distanzaCentroidi = 0;
-    // for (unsigned int j = 0; j < 3; j++){
-    //     distanzaCentroidi += pow((centroide1[j] - centroide2[j]), 2);
-    // }
-
-
     if ((distanzaMax1 + distanzaMax2 + tolleranza) > distanzaCentroidi)
     {
         // Le fratture si possono incontrare
@@ -325,6 +295,25 @@ Vector3d normalePoligono(vector<Vector3d>& poligono)
     return normale;
 }
 
+bool puntoInternoPoligono(Vector3d punto, const vector<Vector3d>& poligono) {
+    unsigned int numVertices = poligono.size();
+    double angoloTotale = 0.0;
+
+    for (unsigned int i = 0; i < numVertices; ++i) {
+        Vector3d v1 = poligono[i] - punto;
+        Vector3d v2 = poligono[(i + 1) % numVertices] - punto;
+
+        double angolo = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+        angoloTotale += angolo;
+    }
+
+    // Se la somma degli angoli è 2*PI, il punto è all'interno del poligono.
+    if (fabs(angoloTotale - 2 * M_PI) < 1e-9 || fabs(angoloTotale - M_PI) < 1e-9) // Utilizziamo una tolleranza per evitare errori numerici.
+    {
+        return true;
+    }
+    return false;
+}
 
 }
 

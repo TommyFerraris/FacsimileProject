@@ -25,4 +25,8 @@ Vector3d normalePoligono(vector<Vector3d>& poligono);
 
 // funzione originale che lega tutte le altre funzioni
 bool funzioneMadre(const string &filename, Struttura_DFN& DFN);
+
+// Funzione che mi veda se il punto di intersezione trovato è all'interno del poligono
+bool puntoInternoPoligono(Vector3d punto, const vector<Vector3d>& poligono);
 }
+

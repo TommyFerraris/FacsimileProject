@@ -18,6 +18,8 @@ struct Struttura_DFN{
     vector<unsigned int> Id_Traccia = {}; /// dimensione 1 x numTracce
     vector<Vector2i> Id_Fratture_Intersecanti = {}; /// dimensione 2 x numTracce
     map <unsigned int, array<Vector3d, 2>> coordinateTraccia = {}; /// marker Id_traccia, dimensione (3 x 2) x numTracce
+    vector<double> lunghezzaTraccia = {}; /// dimensione 1 x numTracce
+    map <Vector2i, unsigned int> tipoTraccia = {}; /// dimensione 1 x (2 x numTracce)
 };
 
 }
