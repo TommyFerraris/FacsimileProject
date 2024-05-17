@@ -51,16 +51,17 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
                         Vector3d vertice2 = DFN.coordinateVertici[i][0];
                         if (k != DFN.numVertici[i] - 1)
                         {
-                            Vector3d vertice2 = DFN.coordinateVertici[i][k+1];
+                            vertice2 = DFN.coordinateVertici[i][k+1];
                         }
 
                         MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
-                        MatriceA.col(0) = (vertice2-vertice1);
-                        MatriceA.col(1) = versoreTangente;
+                        MatriceA1.col(0) = (vertice2-vertice1);
+                        MatriceA1.col(1) = -versoreTangente;
                         Vector3d b1 = (puntoTraccia - vertice1);
 
                         Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
-                        if (alphaBeta[0] >= 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        cout << alphaBeta[0] << endl;
+                        if (alphaBeta[0] > 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
                         {
                             Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
                             puntiTraccia[numPuntiTracce] = Intersezione;
@@ -74,23 +75,26 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
                         Vector3d vertice2 = DFN.coordinateVertici[j][0];
                         if (k != DFN.numVertici[j] - 1)
                         {
-                            Vector3d vertice2 = DFN.coordinateVertici[j][k+1];
+                            vertice2 = DFN.coordinateVertici[j][k+1];
                         }
 
                         MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
-                        MatriceA.col(0) = (vertice2-vertice1);
-                        MatriceA.col(1) = versoreTangente;
+                        MatriceA1.col(0) = (vertice2-vertice1);
+                        MatriceA1.col(1) = -versoreTangente;
                         Vector3d b1 = (puntoTraccia - vertice1);
 
                         Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
-                        if (alphaBeta[0] >= 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
+                        if (alphaBeta[0] > 0 && alphaBeta[0] <= 1 && numPuntiTracce < 2)
                         {
                             Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                            if (numPuntiTracce > 0){
-                                if (Intersezione != puntiTraccia[0]){
+                            if (numPuntiTracce == 0)
+                            {
+                                puntiTraccia[numPuntiTracce] = Intersezione;
+                                numPuntiTracce += 1;
+                            }
+                            else{
                                     puntiTraccia[numPuntiTracce] = Intersezione;
                                     numPuntiTracce += 1;
-                                }
                             }
                         }
                     }
@@ -104,8 +108,8 @@ bool funzioneMadre(const string &filename, Struttura_DFN& DFN)
 
                 }
             }
-
         }
+        return true;
     }
 
     return false;

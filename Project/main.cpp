@@ -13,8 +13,17 @@ int main() {
     // Popola la struttura DFN con i dati necessari
 
     string filename = "./FR3_data.txt"; // Il nome del file in cui esportare i dati
-    if(!ImportFratture(filename, DFN)){
+    if(!funzioneMadre(filename, DFN)){
         return 1;
+    }
+
+    for(unsigned int i = 0; i < DFN.numTracce; i++)
+    {
+        cout << "Id traccia: " << DFN.Id_Traccia[i] << endl;
+        cout << "Id fratture intersecanti: " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1];
+        cout << "Coordinate traccia: " << DFN.coordinateTraccia[i][0][0] << ", " << DFN.coordinateTraccia[i][0][1] << ", " <<
+            DFN.coordinateTraccia[i][0][2] << ", secondo punto: " << DFN.coordinateTraccia[i][1][0] << ", " <<
+            DFN.coordinateTraccia[i][1][1] << ", " << DFN.coordinateTraccia[i][1][2] << ", " << endl;
     }
 
     Vector3d centroide0 = calcolaCentroide(DFN.coordinateVertici[0]);
