@@ -103,21 +103,21 @@ bool ImportFratture(const string &filename,
     }
     file.close();
 
-    for(unsigned int i = 0; i < DFN.numFratture; i++)
-    {
-        // Codice precedente per leggere le informazioni della frattura
+    // for(unsigned int i = 0; i < DFN.numFratture; i++)
+    // {
+    //     // Codice precedente per leggere le informazioni della frattura
 
-        // Stampa dei valori letti per la frattura corrente
-        cout << "Frattura ID: " << DFN.Id_Fratture[i] << endl;
-        cout << "Numero di vertici: " << DFN.numVertici[i] << endl;
-        cout << "Coordinate dei vertici:" << endl;
-        for (unsigned int k = 0; k < DFN.numVertici[i]; k++)
-        {
-            Vector3d vertice = DFN.coordinateVertici[DFN.Id_Fratture[i]][k];
-            cout << "Vertice " << k << ": " << vertice.transpose() << endl;
-        }
-        cout << endl;
-    }
+    //     // Stampa dei valori letti per la frattura corrente
+    // //     cout << "Frattura ID: " << DFN.Id_Fratture[i] << endl;
+    // //     cout << "Numero di vertici: " << DFN.numVertici[i] << endl;
+    // //     cout << "Coordinate dei vertici:" << endl;
+    // //     for (unsigned int k = 0; k < DFN.numVertici[i]; k++)
+    // //     {
+    // //         Vector3d vertice = DFN.coordinateVertici[DFN.Id_Fratture[i]][k];
+    // //         cout << "Vertice " << k << ": " << vertice.transpose() << endl;
+    // //     }
+    // //     cout << endl;
+    // }
 
     return true;
 }
@@ -321,8 +321,8 @@ bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3)
     if (prodotto_Vettoriale[0] == 0 && prodotto_Vettoriale[1] == 0 && prodotto_Vettoriale[2] == 0)
     {
         return ((p3[0] >= min(p1[0], p2[0]) && p3[0] <= max(p1[0], p2[0]) &&
-                  p3[1] >= min(p1[1], p2[1]) && p3[1] <= max(p1[1], p2[1]) &&
-                  p3[2] >= min(p1[2], p2[2]) && p3[2] <= max(p1[2], p2[2])));
+                 p3[1] >= min(p1[1], p2[1]) && p3[1] <= max(p1[1], p2[1]) &&
+                 p3[2] >= min(p1[2], p2[2]) && p3[2] <= max(p1[2], p2[2])));
     }
     return false;
 }
@@ -332,7 +332,6 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
 {
     for (unsigned int k = 0; k < DFN.numFratture; k++)
     {
-        unsigned int num_tracce_per_frattura = 0;
         for (unsigned int i = 0; i < DFN.numTracce; i++)
         {
             if (k == DFN.Id_Fratture_Intersecanti[i][0] || k == DFN.Id_Fratture_Intersecanti[i][1])
@@ -342,7 +341,7 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
                 {
                     Vector3d p_traccia = DFN.coordinateTraccia[i][j];
                     bool risposta = true;
-                    for (unsigned int l = 0; j < DFN.numVertici[k]; l++)
+                    for (unsigned int l = 0; l < DFN.numVertici[k]; l++)
                     {
                         Vector3d p1 = DFN.coordinateVertici[k][l];
                         Vector3d p2 = DFN.coordinateVertici[k][(l+1)%DFN.numVertici[k]];
@@ -353,19 +352,15 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
                     }
                     tipologia[j] = risposta;
                 }
-                if (tipologia[0] == 0 && tipologia[1] == 0)
+                if (tipologia[0] == false && tipologia[1] == false)
                 {
-                    DFN.tipoTraccia[k][num_tracce_per_frattura] = {i,false};
-                    num_tracce_per_frattura += 1;
+                    DFN.tipoTraccia[k].push_back({i,false});
                 }
                 else
                 {
-                    DFN.tipoTraccia[k][num_tracce_per_frattura] = {i,true};
-                    num_tracce_per_frattura += 1;
+                    DFN.tipoTraccia[k].push_back({i,true});
                 }
             }
-
-
         }
     }
 }
