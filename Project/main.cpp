@@ -19,17 +19,18 @@ int main() {
 
     calcolaTracce(DFN);
     calcolaTipologiaTracce(DFN);
+    calcolaLunghezzaTracce(DFN);
 
     for (unsigned int i = 0; i < DFN.numFratture; i++)
     {
         if (DFN.tipoTraccia.count(i)>0)
         {
-            cout << "Per la frattura " << i << "ci sono tali tracce: " << endl;
+            cout << "Per la frattura " << i << " ci sono tali tracce: " << endl;
             for(unsigned int j = 0; j < DFN.tipoTraccia[i].size(); j++)
             {
                 int id_traccia = DFN.tipoTraccia[i][j][0];
                 int tipotraccia = DFN.tipoTraccia[i][j][1];
-                cout << "per la traccia " << id_traccia << "la sua tipologia è " << tipotraccia << endl;
+                cout << "per la traccia " << id_traccia << " la sua tipologia equivale a: " << tipotraccia << endl;
             }
         }
     }

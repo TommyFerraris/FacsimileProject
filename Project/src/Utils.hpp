@@ -33,6 +33,19 @@ bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono);
 // Funzione che controlli se tre punti sono collineari, e se il punto p3 è interno al segmento p1-p2
 bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3);
 
+// Funzione che calcoli il tipo di traccia, se passante false, se non passante true
 void calcolaTipologiaTracce(Struttura_DFN& DFN);
+
+// Funzione che mi calcoli la lunghezza delle tracce
+void calcolaLunghezzaTracce(Struttura_DFN& DFN);
+
+// Funzione che riordini le tracce
+vector<Vector2i> riordinaTracce(vector<double>& lunghezza, vector<Vector2i>& tipo);
+
+double SolidAngle(const Vector3d& a, const Vector3d& b, const Vector3d& c);
+bool IsPointInsideConvexPolyhedron(const Vector3d& point, const std::vector<Vector3d>& vertices);
+
+bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4);
+bool puntoinpoligono(const Vector3d& punto, vector<Vector3d> vertici);
 }
 
