@@ -196,7 +196,7 @@ void calcolaTracce(Struttura_DFN& DFN)
     {
         for (unsigned int j = i+1; j < DFN.numFratture; j++) // Codice id della seconda frattura
         {
-            if (possibiliTracce(DFN.coordinateVertici[i], DFN.coordinateVertici[j], 5e-1))
+            if (possibiliTracce(DFN.coordinateVertici[i], DFN.coordinateVertici[j], 1e-5))
             {
                 Vector3d normaleFrattura_i = normalePoligono(DFN.coordinateVertici[i]);
                 Vector3d normaleFrattura_j = normalePoligono(DFN.coordinateVertici[j]);
@@ -210,7 +210,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                 double bj = normaleFrattura_j.transpose() * calcolaCentroide(DFN.coordinateVertici[j]);
                 Vector3d b = {bi, bj, 0};
 
-                if (MatriceA.determinant() < 1e-09)
+                if (MatriceA.determinant() < 1e-9)
                 {
                     // non c'è una soluzione/intersezione tra i piani
                     continue;
@@ -227,7 +227,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
                     MatriceA1.col(0) = (vertice2-vertice1);
                     MatriceA1.col(1) = -versoreTangente;
-                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-15)
+                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
                     {
                         // le due rette sono parallele e quindi le escludo
                         continue;
@@ -238,7 +238,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoinpoligono(Intersezione, DFN.coordinateVertici[j]))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j]))
                         {
                             puntiTraccia[numPuntiTracce] = Intersezione;
                             numPuntiTracce += 1;
@@ -253,7 +253,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
                     MatriceA1.col(0) = (vertice2-vertice1);
                     MatriceA1.col(1) = -versoreTangente;
-                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-15)
+                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
                     {
                         // le due rette sono parallele e quindi le escludo
                         continue;
@@ -264,10 +264,18 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoinpoligono(Intersezione, DFN.coordinateVertici[i]))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i]))
                         {
-                            puntiTraccia[numPuntiTracce] = Intersezione;
-                            numPuntiTracce += 1;
+                            if (numPuntiTracce == 0)
+                            {
+                                puntiTraccia[numPuntiTracce] = Intersezione;
+                                numPuntiTracce += 1;
+                            }
+                            else
+                            {
+                                puntiTraccia[numPuntiTracce] = Intersezione;
+                                numPuntiTracce += 1;
+                            }
                         }
                     }
                 }
@@ -285,84 +293,32 @@ void calcolaTracce(Struttura_DFN& DFN)
 }
 
 
-bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4)
-{
-    Vector3d v0 = p4-p2;
-    Vector3d v1 = p3-p2;
-    Vector3d v2 = p1-p2;
+bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono) {
+    unsigned int numVertices = poligono.size();
+    double angoloTotale = 0.0;
 
-    double dot00 = v0.dot(v0);
-    double dot01 = v0.dot(v1);
-    double dot02 = v0.dot(v2);
-    double dot11 = v1.dot(v1);
-    double dot12 = v1.dot(v2);
+    for (unsigned int i = 0; i < numVertices; ++i) {
+        Vector3d v1 = poligono[i] - punto;
+        Vector3d v2 = poligono[(i + 1) % numVertices] - punto;
 
-    double invDenom = 1 / (dot00*dot11 - dot01*dot01);
-    double u = (dot11*dot02 - dot01*dot12) * invDenom;
-    double v = (dot00*dot12 - dot01*dot02) *invDenom;
+        double angolo = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+        angoloTotale += angolo;
+    }
 
-    return(u >= 0) && (v>=0) && (u+v<1);
-}
-
-bool puntoinpoligono(const Vector3d& punto, vector<Vector3d> vertici)
-{
-    for (unsigned int i = 1; i<vertici.size()-1; ++i)
+    // Se la somma degli angoli è 2*PI, il punto è all'interno del poligono.
+    if (fabs(angoloTotale - 2 * M_PI) < 1e-9 || fabs(angoloTotale - M_PI) < 1e-9) // Utilizziamo una tolleranza per evitare errori numerici.
     {
-        if (puntointriangolo(punto, vertici[0], vertici[i], vertici[i+1]))
-        {return true;}
+        return true;
     }
     return false;
 }
-// // Funzione per calcolare l'angolo solido sotteso da tre vettori
-// double SolidAngle(const Vector3d& a, const Vector3d& b, const Vector3d& c) {
-//     Vector3d crossProduct = b.cross(c);
-//     double numerator = a.dot(crossProduct);
-//     double denominator = a.norm() * b.norm() * c.norm() + a.dot(b) * c.norm() + a.dot(c) * b.norm() + b.dot(c) * a.norm();
-//     return std::atan2(numerator, denominator);
-// }
-
-// // Funzione per verificare se un punto è interno al poligono convesso usando gli angoli solidi
-// bool IsPointInsideConvexPolyhedron(const Vector3d& point, const std::vector<Vector3d>& vertices) {
-//     double totalAngle = 0.0;
-
-//     for (size_t i = 0; i < vertices.size(); ++i) {
-//         Vector3d a = vertices[i] - point;
-//         Vector3d b = vertices[(i + 1) % vertices.size()] - point;
-//         Vector3d c = vertices[(i + 2) % vertices.size()] - point;
-//         totalAngle += SolidAngle(a, b, c);
-//     }
-
-//     // Verifica se la somma degli angoli solidi è uguale a 4π
-//     return std::fabs(totalAngle - 4 * M_PI) < 1e-16;
-// }
-
-
-// bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono) {
-//     unsigned int numVertices = poligono.size();
-//     double angoloTotale = 0.0;
-
-//     for (unsigned int i = 0; i < numVertices; ++i) {
-//         Vector3d v1 = poligono[i] - punto;
-//         Vector3d v2 = poligono[(i + 1) % numVertices] - punto;
-
-//         double angolo = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
-//         angoloTotale += angolo;
-//     }
-
-//     // Se la somma degli angoli è 2*PI, il punto è all'interno del poligono.
-//     if (fabs(angoloTotale - 2 * M_PI) < 1e-15 || fabs(angoloTotale - M_PI) < 1e-15) // Utilizziamo una tolleranza per evitare errori numerici.
-//     {
-//         return true;
-//     }
-//     return false;
-// }
 
 
 bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3)
 {
     Vector3d prodotto_Vettoriale = (p2-p1).cross(p3-p1);
     // Controllo se punti collineari
-    if (abs(prodotto_Vettoriale[0]) < 1e-12 && abs(prodotto_Vettoriale[1]) < 1e-12 && abs(prodotto_Vettoriale[2]) < 1e-12)
+    if (prodotto_Vettoriale[0] == 0 && prodotto_Vettoriale[1] == 0 && prodotto_Vettoriale[2] == 0)
     {
         return ((p3[0] >= min(p1[0], p2[0]) && p3[0] <= max(p1[0], p2[0]) &&
                  p3[1] >= min(p1[1], p2[1]) && p3[1] <= max(p1[1], p2[1]) &&
@@ -461,4 +417,3 @@ void calcolaLunghezzaTracce(Struttura_DFN& DFN)
 }
 
 }
-

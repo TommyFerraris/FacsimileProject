@@ -12,14 +12,13 @@ int main() {
     Struttura_DFN DFN;
     // Popola la struttura DFN con i dati necessari
 
-    string filename = "./FR3_data.txt"; // Il nome del file in cui esportare i dati
+    string filename = "./FR10_data.txt"; // Il nome del file in cui esportare i dati
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
 
     calcolaTracce(DFN);
     calcolaTipologiaTracce(DFN);
-    calcolaLunghezzaTracce(DFN);
 
     for (unsigned int i = 0; i < DFN.numFratture; i++)
     {
