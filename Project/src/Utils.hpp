@@ -41,11 +41,4 @@ void calcolaLunghezzaTracce(Struttura_DFN& DFN);
 
 // Funzione che riordini le tracce
 vector<Vector2i> riordinaTracce(vector<double>& lunghezza, vector<Vector2i>& tipo);
-
-double SolidAngle(const Vector3d& a, const Vector3d& b, const Vector3d& c);
-bool IsPointInsideConvexPolyhedron(const Vector3d& point, const std::vector<Vector3d>& vertices);
-
-bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4);
-bool puntoinpoligono(const Vector3d& punto, vector<Vector3d> vertici);
 }
-

@@ -238,7 +238,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j]))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j]) && puntoInSegmento(Intersezione, vertice1, vertice2))
                         {
                             puntiTraccia[numPuntiTracce] = Intersezione;
                             numPuntiTracce += 1;
@@ -264,7 +264,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i]))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i]) && puntoInSegmento(Intersezione, vertice1, vertice2))
                         {
                             if (numPuntiTracce == 0)
                             {
@@ -292,6 +292,8 @@ void calcolaTracce(Struttura_DFN& DFN)
     }
 }
 
+
+// Provare con matrice di rotazione per girare poligono e punto
 
 bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono) {
     unsigned int numVertices = poligono.size();
