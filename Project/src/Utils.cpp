@@ -238,7 +238,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j]) && puntoInSegmento(Intersezione, vertice1, vertice2))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j], normaleFrattura_j) && puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i], normaleFrattura_i))
                         {
                             puntiTraccia[numPuntiTracce] = Intersezione;
                             numPuntiTracce += 1;
@@ -264,7 +264,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     if (numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
-                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i]) && puntoInSegmento(Intersezione, vertice1, vertice2))
+                        if (puntoInternoPoligono(Intersezione, DFN.coordinateVertici[i], normaleFrattura_i) && puntoInternoPoligono(Intersezione, DFN.coordinateVertici[j], normaleFrattura_j))
                         {
                             if (numPuntiTracce == 0)
                             {
@@ -292,24 +292,34 @@ void calcolaTracce(Struttura_DFN& DFN)
     }
 }
 
+//funzione calcolo del pun to interno con matrice di rotazione (NON VIENE)
 
-// Provare con matrice di rotazione per girare poligono e punto
-
-bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono) {
+bool puntoInternoPoligono(Vector3d& punto, const vector<Eigen::Vector3d>& poligono, Vector3d& normale) {
     unsigned int numVertices = poligono.size();
     double angoloTotale = 0.0;
 
-    for (unsigned int i = 0; i < numVertices; ++i) {
-        Vector3d v1 = poligono[i] - punto;
-        Vector3d v2 = poligono[(i + 1) % numVertices] - punto;
+    // Trasformazione di ogni punto del poligono e del punto da verificare
+    vector<Eigen::Vector3d> poligonoTraslato;
+    Matrix3d Q;
+    Q << normale[1], -((normale[0] * normale[1]) / sqrt(std::pow(normale[0], 2) + pow(normale[1], 2))), normale[0],
+        -normale[0], -((normale[1] * normale[2]) / sqrt(std::pow(normale[0], 2) + pow(normale[1], 2))), normale[1],
+        0, sqrt(pow(normale[0], 2) + pow(normale[1], 2)), normale[2];
 
-        double angolo = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+    for (const auto& vertice : poligono) {
+        poligonoTraslato.push_back(Q * vertice);
+    }
+    Vector3d puntoTraslato = Q * punto;
+
+    for (unsigned int i = 0; i < numVertices; ++i) {
+        Vector3d v1 = poligonoTraslato[i] - puntoTraslato;
+        Vector3d v2 = poligonoTraslato[(i + 1) % numVertices] - puntoTraslato;
+
+        double angolo = std::acos(v1.dot(v2) / (v1.norm() * v2.norm()));
         angoloTotale += angolo;
     }
 
     // Se la somma degli angoli è 2*PI, il punto è all'interno del poligono.
-    if (fabs(angoloTotale - 2 * M_PI) < 1e-9 || fabs(angoloTotale - M_PI) < 1e-9) // Utilizziamo una tolleranza per evitare errori numerici.
-    {
+    if (fabs(angoloTotale - 2 * M_PI) < 1e-9 || fabs(angoloTotale - M_PI) < 1e-9) {
         return true;
     }
     return false;
@@ -419,3 +429,4 @@ void calcolaLunghezzaTracce(Struttura_DFN& DFN)
 }
 
 }
+
