@@ -28,7 +28,9 @@ Vector3d normalePoligono(vector<Vector3d>& poligono);
 void calcolaTracce(Struttura_DFN& DFN);
 
 // Funzione che mi veda se il punto di intersezione trovato è all'interno del poligono
-bool puntoInternoPoligono(Vector3d& punto, const vector<Vector3d>& poligono, Vector3d& normale);
+bool puntoInternoPoligono(const Vector3d& punto, vector<Vector3d>& poligono);
+
+// bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4);
 
 // Funzione che controlli se tre punti sono collineari, e se il punto p3 è interno al segmento p1-p2
 bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3);

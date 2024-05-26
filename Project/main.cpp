@@ -12,7 +12,7 @@ int main() {
     Struttura_DFN DFN;
     // Popola la struttura DFN con i dati necessari
 
-    string filename = "./FR82_data.txt"; // Il nome del file in cui esportare i dati
+    string filename = "./FR3_data.txt"; // Il nome del file in cui esportare i dati
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
@@ -20,28 +20,28 @@ int main() {
     calcolaTracce(DFN);
     calcolaTipologiaTracce(DFN);
 
-    for (unsigned int i = 0; i < DFN.numFratture; i++)
-    {
-        if (DFN.tipoTraccia.count(i)>0)
-        {
-            cout << "Per la frattura " << i << " ci sono tali tracce: " << endl;
-            for(unsigned int j = 0; j < DFN.tipoTraccia[i].size(); j++)
-            {
-                int id_traccia = DFN.tipoTraccia[i][j][0];
-                int tipotraccia = DFN.tipoTraccia[i][j][1];
-                cout << "per la traccia " << id_traccia << " la sua tipologia equivale a: " << tipotraccia << endl;
-            }
-        }
-    }
-
-    // for(unsigned int i = 0; i < DFN.numTracce; i++)
+    // for (unsigned int i = 0; i < DFN.numFratture; i++)
     // {
-    //     cout << "Id traccia: " << DFN.Id_Traccia[i] << endl;
-    //     cout << "Id fratture intersecanti: " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1];
-    //     cout << "Coordinate traccia: " << DFN.coordinateTraccia[i][0][0] << ", " << DFN.coordinateTraccia[i][0][1] << ", " <<
-    //         DFN.coordinateTraccia[i][0][2] << ", secondo punto: " << DFN.coordinateTraccia[i][1][0] << ", " <<
-    //         DFN.coordinateTraccia[i][1][1] << ", " << DFN.coordinateTraccia[i][1][2] << ", " << endl;
+    //     if (DFN.tipoTraccia.count(i)>0)
+    //     {
+    //         cout << "Per la frattura " << i << " ci sono tali tracce: " << endl;
+    //         for(unsigned int j = 0; j < DFN.tipoTraccia[i].size(); j++)
+    //         {
+    //             int id_traccia = DFN.tipoTraccia[i][j][0];
+    //             int tipotraccia = DFN.tipoTraccia[i][j][1];
+    //             cout << "per la traccia " << id_traccia << " la sua tipologia equivale a: " << tipotraccia << endl;
+    //         }
+    //     }
     // }
+
+    for(unsigned int i = 0; i < DFN.numTracce; i++)
+    {
+        cout << "Id traccia: " << DFN.Id_Traccia[i] << endl;
+        cout << "Id fratture intersecanti: " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1];
+        cout << "Coordinate traccia: " << DFN.coordinateTraccia[i][0][0] << ", " << DFN.coordinateTraccia[i][0][1] << ", " <<
+            DFN.coordinateTraccia[i][0][2] << ", secondo punto: " << DFN.coordinateTraccia[i][1][0] << ", " <<
+            DFN.coordinateTraccia[i][1][1] << ", " << DFN.coordinateTraccia[i][1][2] << ", " << endl;
+    }
 
     // Vector3d centroide0 = calcolaCentroide(DFN.coordinateVertici[0]);
     // Vector3d centroide1 = calcolaCentroide(DFN.coordinateVertici[1]);
