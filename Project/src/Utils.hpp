@@ -30,7 +30,8 @@ void calcolaTracce(Struttura_DFN& DFN);
 // Funzione che mi veda se il punto di intersezione trovato è all'interno del poligono
 bool puntoInternoPoligono(const Vector3d& punto, vector<Vector3d>& poligono);
 
-// bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4);
+// Funzione che controlla se il punto p1 è interno al triangolo formato dagli altri tre punti
+bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4);
 
 // Funzione che controlli se tre punti sono collineari, e se il punto p3 è interno al segmento p1-p2
 bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3);
@@ -43,4 +44,10 @@ void calcolaLunghezzaTracce(Struttura_DFN& DFN);
 
 // Funzione che riordini le tracce
 vector<Vector2i> riordinaTracce(vector<double>& lunghezza, vector<Vector2i>& tipo);
+
+// Prima funzione di output
+bool OutputTracce(Struttura_DFN& DFN, const string& fileOutput);
+
+// Seconda funzione output
+bool OutputFratture(Struttura_DFN& DFN, const string& fileOutput);
 }

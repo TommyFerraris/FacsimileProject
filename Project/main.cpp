@@ -1,6 +1,7 @@
 #include <iostream>
 #include "GeometryDFN.hpp"
 #include "Utils.hpp"
+#include <filesystem>
 
 using namespace std;
 using namespace Eigen;
@@ -10,15 +11,40 @@ using namespace DFN_Library;
 int main() {
 
     Struttura_DFN DFN;
-    // Popola la struttura DFN con i dati necessari
 
+    // Popola la struttura DFN con i dati necessari
     string filename = "./FR3_data.txt"; // Il nome del file in cui esportare i dati
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
 
+    // Funzioni che lavorano sulla struttura DFN
     calcolaTracce(DFN);
     calcolaTipologiaTracce(DFN);
+    calcolaLunghezzaTracce(DFN);
+
+    // Funzioni che mi salvino i risultati in file .csv
+    string directory = "results";
+    if (!filesystem::exists(directory)) {
+        if (!filesystem::create_directory(directory)) {
+            std::cerr << "Errore nella creazione della cartella: " << directory << std::endl;
+            return 4;
+        }
+    }
+    string OutputNameTraccia = "./results/Tracce_FR3.csv";
+    string OutputNameFrattura = "./results/Fratture_FR3.csv";
+    if(!OutputTracce(DFN, OutputNameTraccia)){
+        return 2;
+    }
+    if(!OutputFratture(DFN, OutputNameFrattura)){
+        return 3;
+    }
+
+    // for (unsigned int i = 0; i < DFN.numTracce; i++)
+    // {
+    //     cout << "Id traccia: " << i << ", lunghezza: " << DFN.lunghezzaTraccia[i] << endl;
+    // }
+
 
     // for (unsigned int i = 0; i < DFN.numFratture; i++)
     // {
@@ -34,14 +60,14 @@ int main() {
     //     }
     // }
 
-    for(unsigned int i = 0; i < DFN.numTracce; i++)
-    {
-        cout << "Id traccia: " << DFN.Id_Traccia[i] << endl;
-        cout << "Id fratture intersecanti: " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1];
-        cout << "Coordinate traccia: " << DFN.coordinateTraccia[i][0][0] << ", " << DFN.coordinateTraccia[i][0][1] << ", " <<
-            DFN.coordinateTraccia[i][0][2] << ", secondo punto: " << DFN.coordinateTraccia[i][1][0] << ", " <<
-            DFN.coordinateTraccia[i][1][1] << ", " << DFN.coordinateTraccia[i][1][2] << ", " << endl;
-    }
+    // for(unsigned int i = 0; i < DFN.numTracce; i++)
+    // {
+    //     cout << "Id traccia: " << DFN.Id_Traccia[i] << endl;
+    //     cout << "Id fratture intersecanti: " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1];
+    //     cout << "Coordinate traccia: " << DFN.coordinateTraccia[i][0][0] << ", " << DFN.coordinateTraccia[i][0][1] << ", " <<
+    //         DFN.coordinateTraccia[i][0][2] << ", secondo punto: " << DFN.coordinateTraccia[i][1][0] << ", " <<
+    //         DFN.coordinateTraccia[i][1][1] << ", " << DFN.coordinateTraccia[i][1][2] << ", " << endl;
+    // }
 
     // Vector3d centroide0 = calcolaCentroide(DFN.coordinateVertici[0]);
     // Vector3d centroide1 = calcolaCentroide(DFN.coordinateVertici[1]);
