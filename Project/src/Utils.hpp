@@ -21,9 +21,6 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
 // funzione che mi calcola la normale al poligono
 Vector3d normalePoligono(vector<Vector3d>& poligono);
 
-// funzione che mi calcoli le tracce
-
-
 // funzione originale che lega tutte le altre funzioni
 void calcolaTracce(Struttura_DFN& DFN);
 

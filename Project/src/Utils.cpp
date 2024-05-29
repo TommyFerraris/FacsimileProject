@@ -1,5 +1,4 @@
 #include "Utils.hpp"
-#include "iomanip"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -285,7 +284,6 @@ void calcolaTracce(Struttura_DFN& DFN)
 }
 
 
-
 bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3, const Vector3d& p4)
 {
     Vector3d v0 = p4-p2;
@@ -337,7 +335,8 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
     {
         for (unsigned int i = 0; i < DFN.numTracce; i++)
         {
-            if (k == DFN.Id_Fratture_Intersecanti[i][0] || k == DFN.Id_Fratture_Intersecanti[i][1])
+            int idFrattura = k;
+            if (idFrattura == DFN.Id_Fratture_Intersecanti[i][0] || idFrattura == DFN.Id_Fratture_Intersecanti[i][1])
             {
                 Vector2i tipologia;
                 for (unsigned int j = 0; j < 2; j++)
@@ -371,7 +370,7 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
 
 vector<Vector2i> riordinaTracce(vector<double>& lunghezza, vector<Vector2i>& tipo)
 {
-    vector<pair<double, unsigned int>> coppieIdLunghezza;
+    vector<pair<double, int>> coppieIdLunghezza;
     for (unsigned int i = 0; i < lunghezza.size(); i++)
     {
         coppieIdLunghezza.push_back({lunghezza[i], i});
@@ -431,13 +430,15 @@ bool OutputTracce(Struttura_DFN& DFN, const string& fileOutput)
         return false;
     }
     file << "# Number of Traces" << endl;
+    file.precision(16);
+    file << scientific;
     file << DFN.numTracce << endl;
-    file << "TraceId;FractureId1;FractureId2;X1;Y1;Z1;X2;Y2;Z2" << endl;
+    file << "# TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2" << endl;
     for (unsigned int i = 0; i < DFN.numTracce; i++)
     {
-        file << i << ";" << DFN.Id_Fratture_Intersecanti[i][0] << ";" << DFN.Id_Fratture_Intersecanti[i][1] << ";"
-             << DFN.coordinateTraccia[i][0][0] << ";" << DFN.coordinateTraccia[i][0][1] << ";" << DFN.coordinateTraccia[i][0][2] << ";"
-             << DFN.coordinateTraccia[i][1][0] << ";" << DFN.coordinateTraccia[i][1][1] << ";" << DFN.coordinateTraccia[i][1][2] << endl;
+        file << i << "; " << DFN.Id_Fratture_Intersecanti[i][0] << "; " << DFN.Id_Fratture_Intersecanti[i][1] << "; "
+             << DFN.coordinateTraccia[i][0][0] << "; " << DFN.coordinateTraccia[i][0][1] << "; " << DFN.coordinateTraccia[i][0][2] << "; "
+             << DFN.coordinateTraccia[i][1][0] << "; " << DFN.coordinateTraccia[i][1][1] << "; " << DFN.coordinateTraccia[i][1][2] << endl;
     }
     file.close();
     return true;
@@ -458,11 +459,11 @@ bool OutputFratture(Struttura_DFN& DFN, const string& fileOutput)
         if (DFN.tipoTraccia[i].size() != 0)
         {
             file << "# FractureId; NumTraces" << endl; // Header separato da virgole
-            file << i << ";" << DFN.tipoTraccia[i].size() << endl; // Dati separati da virgole
-            file << "# TraceId;Tips;Length" << endl; // Header separato da virgole
+            file << i << "; " << DFN.tipoTraccia[i].size() << endl; // Dati separati da virgole
+            file << "# TraceId; Tips; Length" << endl; // Header separato da virgole
             for (unsigned int k = 0; k < DFN.tipoTraccia[i].size(); k++)
             {
-                file << DFN.tipoTraccia[i][k][0] << ";" << DFN.tipoTraccia[i][k][1] << ";" << DFN.lunghezzaTraccia[DFN.tipoTraccia[i][k][0]] << endl; // Dati separati da virgole
+                file << DFN.tipoTraccia[i][k][0] << "; " << DFN.tipoTraccia[i][k][1] << "; " << DFN.lunghezzaTraccia[DFN.tipoTraccia[i][k][0]] << endl; // Dati separati da virgole
             }
         }
     }

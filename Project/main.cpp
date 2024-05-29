@@ -28,16 +28,16 @@ int main() {
     if (!filesystem::exists(directory)) {
         if (!filesystem::create_directory(directory)) {
             std::cerr << "Errore nella creazione della cartella: " << directory << std::endl;
-            return 4;
+            return 2;
         }
     }
-    string OutputNameTraccia = "./results/Tracce_FR3.csv";
-    string OutputNameFrattura = "./results/Fratture_FR3.csv";
+    string OutputNameTraccia = "./results/Tracce_FR3.txt";
+    string OutputNameFrattura = "./results/Fratture_FR3.txt";
     if(!OutputTracce(DFN, OutputNameTraccia)){
-        return 2;
+        return 3;
     }
     if(!OutputFratture(DFN, OutputNameFrattura)){
-        return 3;
+        return 4;
     }
 
     // for (unsigned int i = 0; i < DFN.numTracce; i++)
