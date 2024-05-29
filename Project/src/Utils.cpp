@@ -107,7 +107,7 @@ bool ImportFratture(const string &filename,
 }
 
 
-Vector3d calcolaCentroide(vector<Vector3d>& poligono)
+Vector3d calcolaCentroide(const vector<Vector3d>& poligono)
 {
     Vector3d centroide = Vector3d::Zero();    //inizializzo a zero il centroide
     int n = poligono.size();
@@ -119,7 +119,7 @@ Vector3d calcolaCentroide(vector<Vector3d>& poligono)
 }
 
 
-bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, double tolleranza)
+bool possibiliTracce(const vector<Vector3d>& poligono1, const vector<Vector3d>& poligono2, const double tolleranza)
 {
     // Controllo sulla distanza delle fratture:
     Vector3d centroide1 = calcolaCentroide(poligono1);
@@ -157,7 +157,7 @@ bool possibiliTracce(vector<Vector3d>& poligono1, vector<Vector3d>& poligono2, d
 }
 
 
-Vector3d normalePoligono(vector<Vector3d>& poligono)
+Vector3d normalePoligono(const vector<Vector3d>& poligono)
 {
     Vector3d punto0 = poligono[0];
     Vector3d punto1 = poligono[1];
@@ -315,11 +315,11 @@ bool puntoInternoPoligono(const Vector3d& punto, vector<Vector3d>& poligono)
 }
 
 
-bool puntoInSegmento(Vector3d& p1, Vector3d& p2, Vector3d& p3)
+bool puntoInSegmento(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3)
 {
     Vector3d prodotto_Vettoriale = (p2-p1).cross(p3-p1);
     // Controllo se punti collineari
-    if (prodotto_Vettoriale[0] == 0 && prodotto_Vettoriale[1] == 0 && prodotto_Vettoriale[2] == 0)
+    if (fabs(prodotto_Vettoriale[0]) < 1e-12 && fabs(prodotto_Vettoriale[1]) < 1e-12 && fabs(prodotto_Vettoriale[2]) < 1e-12)
     {
         return ((p3[0] >= min(p1[0], p2[0]) && p3[0] <= max(p1[0], p2[0]) &&
                  p3[1] >= min(p1[1], p2[1]) && p3[1] <= max(p1[1], p2[1]) &&
@@ -368,7 +368,7 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
 }
 
 
-vector<Vector2i> riordinaTracce(vector<double>& lunghezza, vector<Vector2i>& tipo)
+vector<Vector2i> riordinaTracce(const vector<double>& lunghezza, const vector<Vector2i>& tipo)
 {
     vector<pair<double, int>> coppieIdLunghezza;
     for (unsigned int i = 0; i < lunghezza.size(); i++)

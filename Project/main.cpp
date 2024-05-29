@@ -1,11 +1,13 @@
 #include <iostream>
 #include "GeometryDFN.hpp"
 #include "Utils.hpp"
+#include "Utils2.hpp"
 #include <filesystem>
 
 using namespace std;
 using namespace Eigen;
 using namespace DFN_Library;
+using namespace DFN_PolygonalLibrary;
 
 
 int main() {
@@ -38,6 +40,20 @@ int main() {
     }
     if(!OutputFratture(DFN, OutputNameFrattura)){
         return 4;
+    }
+
+
+    array<vector<Vector3d>, 2> soluzione = dividiPoligono(DFN.coordinateVertici[0], DFN.coordinateTraccia[0][0], DFN.coordinateTraccia[0][1]);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        cout << "poligono " << i << endl;
+        for (unsigned int j = 0; j < soluzione[i].size(); j++)
+        {
+            for (unsigned int k = 0; k < 3; k++)
+            {
+                cout << "punto sull'asse " << k << " = " << soluzione[i][j][k] << endl;
+            }
+        }
     }
 
     // for (unsigned int i = 0; i < DFN.numTracce; i++)
