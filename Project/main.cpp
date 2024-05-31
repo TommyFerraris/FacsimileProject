@@ -15,7 +15,7 @@ int main() {
     Struttura_DFN DFN;
 
     // Popola la struttura DFN con i dati necessari
-    string filename = "./FR3_data.txt"; // Il nome del file in cui esportare i dati
+    string filename = "./FR10_data.txt"; // Il nome del file in cui esportare i dati
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
@@ -43,16 +43,30 @@ int main() {
     }
 
 
-    array<vector<Vector3d>, 2> soluzione = dividiPoligono(DFN.coordinateVertici[0], DFN.coordinateTraccia[0][0], DFN.coordinateTraccia[0][1]);
-    for (unsigned int i = 0; i < 2; i++)
+    // array<vector<Vector3d>, 2> soluzione = dividiPoligono(DFN.coordinateVertici[0], DFN.coordinateTraccia[0][0], DFN.coordinateTraccia[0][1]);
+    // for (unsigned int i = 0; i < 2; i++)
+    // {
+    //     cout << "poligono " << i << endl;
+    //     for (unsigned int j = 0; j < soluzione[i].size(); j++)
+    //     {
+    //         for (unsigned int k = 0; k < 3; k++)
+    //         {
+    //             cout << "punto sull'asse " << k << " = " << soluzione[i][j][k] << endl;
+    //         }
+    //     }
+    // }
+    // bool risposta = trovaIntersezioneTracciaPoligono(soluzione[0], DFN.coordinateTraccia[1][0], DFN.coordinateTraccia[1][1]);
+    // cout << risposta << endl;
+    // bool risposta1 = trovaIntersezioneTracciaPoligono(soluzione[1], DFN.coordinateTraccia[1][0], DFN.coordinateTraccia[1][1]);
+    // cout << risposta1 << endl;
+
+    unsigned int numero = 1;
+    vector<vector<Vector3d>> poligoni = trovaPoligoniTotali(numero, DFN);
+    for (unsigned int i = 0; i < poligoni.size(); i++)
     {
-        cout << "poligono " << i << endl;
-        for (unsigned int j = 0; j < soluzione[i].size(); j++)
+        for (unsigned int j = 0; j < poligoni[i].size(); j++)
         {
-            for (unsigned int k = 0; k < 3; k++)
-            {
-                cout << "punto sull'asse " << k << " = " << soluzione[i][j][k] << endl;
-            }
+            cout << poligoni[i][j][0] << ";" << poligoni[i][j][1] << ";" << poligoni[i][j][2] << endl;
         }
     }
 

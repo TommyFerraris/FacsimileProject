@@ -193,7 +193,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                 double bj = normaleFrattura_j.transpose() * calcolaCentroide(DFN.coordinateVertici[j]);
                 Vector3d b = {bi, bj, 0};
 
-                if (MatriceA.determinant() < 1e-9)
+                if (MatriceA.determinant() < 1e-12)
                 {
                     // non c'è una soluzione/intersezione tra i piani
                     continue;
@@ -210,7 +210,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
                     MatriceA1.col(0) = (vertice2-vertice1);
                     MatriceA1.col(1) = versoreTangente;
-                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
+                    if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-12)
                     {
                         // le due rette sono parallele e quindi le escludo
                         continue;
