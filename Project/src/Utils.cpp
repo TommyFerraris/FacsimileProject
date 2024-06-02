@@ -166,8 +166,8 @@ Vector3d normalePoligono(const vector<Vector3d>& poligono)
     Vector3d vettore1_0 = punto1 - punto0; // vettore che parte da p1 e arriva in p0
     Vector3d vettore1_2 = punto1 - punto2; // vettore che parte da p1 e arriva in p2
 
-    Vector3d normale = (vettore1_0.cross(vettore1_2))/(vettore1_0.norm() * vettore1_2.norm());
-    return normale;
+    Vector3d normale = (vettore1_0.cross(vettore1_2));
+    return normale.normalized();
 }
 
 
