@@ -60,8 +60,8 @@ int main() {
     // bool risposta1 = trovaIntersezioneTracciaPoligono(soluzione[1], DFN.coordinateTraccia[1][0], DFN.coordinateTraccia[1][1]);
     // cout << risposta1 << endl;
 
-    unsigned int numero = 1;
-    vector<vector<Vector3d>> poligoni = trovaPoligoniTotali(numero, DFN);
+    unsigned int numero = 0;
+    vector<vector<Vector3d>> poligoni = trovaPoligoniTotali(numero, DFN).first;
     for (unsigned int i = 0; i < poligoni.size(); i++)
     {
         for (unsigned int j = 0; j < poligoni[i].size(); j++)
@@ -69,6 +69,18 @@ int main() {
             cout << poligoni[i][j][0] << ";" << poligoni[i][j][1] << ";" << poligoni[i][j][2] << endl;
         }
     }
+
+    PolygonalMesh Mesh = trovaPoligoniTotali(numero, DFN).second;
+    for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
+    {
+        cout << "Id cella 0D: " << Mesh.Cell0DId[i] << "; coordinate: " << Mesh.Cell0DCoordinates[i][0] << "; " << Mesh.Cell0DCoordinates[i][1] << "; " << Mesh.Cell0DCoordinates[i][2] << endl;
+    }
+    calcolaCelle1D(poligoni, Mesh);
+    for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
+    {
+        cout << "Id cella 1D: " << Mesh.Cell1DId[i] << "; vertici Id: " << Mesh.Cell1DVertices[i][0] << ";" << Mesh.Cell1DVertices[i][1] << endl;
+    }
+
 
     // for (unsigned int i = 0; i < DFN.numTracce; i++)
     // {
