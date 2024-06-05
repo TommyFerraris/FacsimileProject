@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include "Eigen/Eigen"
 
 using namespace std;
@@ -20,6 +19,7 @@ struct Struttura_DFN{
     map <unsigned int, array<Vector3d, 2>> coordinateTraccia = {}; /// marker Id_traccia, dimensione (3 x 2) x numTracce
     vector<double> lunghezzaTraccia = {}; /// dimensione 1 x numTracce
     map <unsigned int, vector<Vector2i>> tipoTraccia = {}; /// dimensione 2 x (2 x numTracce)
+    vector<unsigned int> Id_FrattureConTraccia = {}; /// dimensione 1 x dimensione TipoTraccia
 };
 
 }

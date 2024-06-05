@@ -17,9 +17,7 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
 // Funzione che calcoli le celle 0D
 PolygonalMesh calcolaCelle0D(vector<list<Vector3d>>& insiemePoligoni);
 // Funzione che ci salvi in una mesh le celle1D
-void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh);
-// Funzione che mi calcoli il fattoriale, costruita in modo ricorsivo
-unsigned long long fattoriale (unsigned int n);
-// Funzione che calcoli le celle 2D
-void calcolaCelle2D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh);
+void calcolaCelle1D2D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh);
+// Funzione che mi stampi in un file il risultato finale
+bool OutputPolygonalMesh(Struttura_DFN& DFN, const string& fileOutput);
 }

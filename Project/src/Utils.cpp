@@ -6,6 +6,7 @@
 #include "Eigen/Eigen"
 #include "cmath"
 #include "algorithm"
+#include "MergeSort.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -174,7 +175,6 @@ Vector3d normalePoligono(const vector<Vector3d>& poligono)
 void calcolaTracce(Struttura_DFN& DFN)
 {
     unsigned int contatoreTraccia = 0;
-
     for (unsigned int i = 0; i < DFN.numFratture - 1; i++) // Codice id della prima frattura
     {
         for (unsigned int j = i+1; j < DFN.numFratture; j++) // Codice id della seconda frattura
@@ -198,7 +198,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     // non c'è una soluzione/intersezione tra i piani
                     continue;
                 }
-                Vector3d puntoTraccia = MatriceA.fullPivLu().solve(b);
+                Vector3d puntoTraccia = MatriceA.partialPivLu().solve(b);
 
                 unsigned int numPuntiTracce = 0;
                 array<Vector3d,2> puntiTraccia;
@@ -217,7 +217,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     }
                     Vector3d b1 = (puntoTraccia - vertice1);
 
-                    Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
+                    Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
                     if (alphaBeta[0] < 1 + 1e-09 && alphaBeta[0] > -1e-09 && numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
@@ -255,7 +255,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     }
                     Vector3d b1 = (puntoTraccia - vertice1);
 
-                    Vector2d alphaBeta = MatriceA1.fullPivLu().solve(b1);
+                    Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
                     if (alphaBeta[0] < 1 + 1e-09 && alphaBeta[0] > -1e-09 && numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
@@ -331,8 +331,10 @@ bool puntoInSegmento(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3)
 
 void calcolaTipologiaTracce(Struttura_DFN& DFN)
 {
+    DFN.Id_FrattureConTraccia.reserve(DFN.numFratture);
     for (unsigned int k = 0; k < DFN.numFratture; k++)
     {
+        unsigned int contatore = 0;
         for (unsigned int i = 0; i < DFN.numTracce; i++)
         {
             int idFrattura = k;
@@ -357,14 +359,21 @@ void calcolaTipologiaTracce(Struttura_DFN& DFN)
                 if (tipologia[0] == false && tipologia[1] == false)
                 {
                     DFN.tipoTraccia[k].push_back({i,false});
+                    contatore += 1;
                 }
                 else
                 {
                     DFN.tipoTraccia[k].push_back({i,true});
+                    contatore += 1;
                 }
             }
         }
+        if (contatore != 0)
+        {
+            DFN.Id_FrattureConTraccia.push_back(k);
+        }
     }
+    DFN.Id_FrattureConTraccia.shrink_to_fit();
 }
 
 
@@ -407,6 +416,7 @@ vector<Vector2i> riordinaTracce(const vector<double>& lunghezza, const vector<Ve
 
 void calcolaLunghezzaTracce(Struttura_DFN& DFN)
 {
+    DFN.lunghezzaTraccia.reserve(DFN.numTracce);
     for (unsigned int i = 0; i < DFN.numTracce; i++)
     {
         double lunghezza = (DFN.coordinateTraccia[i][1] - DFN.coordinateTraccia[i][0]).norm();
