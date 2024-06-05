@@ -1,0 +1,12 @@
+# Id Frattura
+360
+# Id; NumVertices; Vertices; NumEdges; Edges
+0; 4; 0; 1; 2; 3; 4; 0; 1; 2; 3
+1; 4; 3; 4; 5; 0; 4; 4; 5; 6; 3
+
+# Id Frattura
+361
+# Id; NumVertices; Vertices; NumEdges; Edges
+0; 4; 0; 1; 2; 3; 4; 0; 1; 2; 3
+1; 4; 3; 4; 5; 0; 4; 4; 5; 6; 3
+
