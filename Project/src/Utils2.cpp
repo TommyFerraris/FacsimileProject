@@ -187,6 +187,43 @@ PolygonalMesh calcolaCelle0D(vector<list<Vector3d>>& insiemePoligoni)
 }
 
 
+// void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh) {
+//     Mesh.Cell1DId.reserve(fattoriale(Mesh.NumberCell0D));
+//     Mesh.Cell1DVertices.reserve(fattoriale(Mesh.NumberCell0D));
+//     unsigned int Id = 0;
+
+//     for (unsigned int i = 0; i < insiemePoligoni.size(); i++) {
+//         for (auto it = insiemePoligoni[i].begin(); it != insiemePoligoni[i].end(); ++it) {
+//             Vector3d vertice1 = *it;
+//             auto IdV1 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice1);
+//             int Id1 = distance(Mesh.Cell0DCoordinates.begin(), IdV1);
+
+//             auto nextIt = next(it);
+//             if (nextIt == insiemePoligoni[i].end()) {
+//                 nextIt = insiemePoligoni[i].begin();
+//             }
+//             Vector3d vertice2 = *nextIt;
+//             auto IdV2 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice2);
+//             int Id2 = distance(Mesh.Cell0DCoordinates.begin(), IdV2);
+
+//             Vector2i prova1 = {Id1, Id2};
+//             Vector2i prova2 = {Id2, Id1};
+
+//             if (find(Mesh.Cell1DVertices.begin(), Mesh.Cell1DVertices.end(), prova1) == Mesh.Cell1DVertices.end() &&
+//                 find(Mesh.Cell1DVertices.begin(), Mesh.Cell1DVertices.end(), prova2) == Mesh.Cell1DVertices.end()) {
+//                 Mesh.NumberCell1D += 1;
+//                 Mesh.Cell1DId.push_back(Id);
+//                 Mesh.Cell1DVertices.push_back(prova1);
+//                 Id += 1;
+//             }
+//         }
+//     }
+
+//     Mesh.Cell1DId.shrink_to_fit();
+//     Mesh.Cell1DVertices.shrink_to_fit();
+// }
+
+
 void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh) {
     Mesh.Cell1DId.reserve(fattoriale(Mesh.NumberCell0D));
     Mesh.Cell1DVertices.reserve(fattoriale(Mesh.NumberCell0D));
@@ -198,14 +235,14 @@ void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh
     Mesh.Cell2DEdges.reserve(insiemePoligoni.size());
     unsigned int Id2D = 0;
     Mesh.NumberCell2D = insiemePoligoni.size();
-    vector<unsigned int> Vertici;
-    vector<unsigned int> Lati;
 
     for (unsigned int i = 0; i < insiemePoligoni.size(); i++) {
         Mesh.Cell2DId.push_back(Id2D);
         Mesh.Cell2DNumVertices.push_back(insiemePoligoni[i].size());
         Mesh.Cell2DNumEdges.push_back(insiemePoligoni[i].size());
         Id2D += 1;
+        vector<unsigned int> Vertici;
+        vector<unsigned int> Lati;
         for (auto it = insiemePoligoni[i].begin(); it != insiemePoligoni[i].end(); ++it) {
             Vector3d vertice1 = *it;
             auto IdV1 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice1);
@@ -228,8 +265,8 @@ void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh
                 Mesh.NumberCell1D += 1;
                 Mesh.Cell1DId.push_back(Id);
                 Mesh.Cell1DVertices.push_back(prova1);
-                Id += 1;
                 Lati.push_back(Id);
+                Id += 1;
             }
             else
             {
@@ -255,30 +292,56 @@ void calcolaCelle1D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh
     Mesh.Cell1DVertices.shrink_to_fit();
 }
 
+// void calcolaCelle2D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh)
+// {
+//     Mesh.Cell2DId.reserve(insiemePoligoni.size());
+//     Mesh.Cell2DNumVertices.reserve(insiemePoligoni.size());
+//     Mesh.Cell2DVertices.reserve(insiemePoligoni.size());
+//     Mesh.Cell2DNumEdges.reserve(insiemePoligoni.size());
+//     Mesh.Cell2DEdges.reserve(insiemePoligoni.size());
+//     unsigned int Id = 0;
+//     Mesh.NumberCell2D = insiemePoligoni.size();
+//     for (unsigned int i = 0; i < insiemePoligoni.size(); i++)
+//     {
+//         vector<unsigned int> Vertici;
+//         vector<unsigned int> Lati;
+//         Mesh.Cell2DId.push_back(Id);
+//         Mesh.Cell2DNumVertices.push_back(insiemePoligoni[i].size());
+//         Mesh.Cell2DNumEdges.push_back(insiemePoligoni[i].size());
+//         Id += 1;
+//         for (auto it = insiemePoligoni[i].begin(); it != insiemePoligoni[i].end(); ++it)
+//         {
+//             Vector3d vertice1 = *it;
+//             auto IdV1 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice1);
+//             unsigned int Id1 = distance(Mesh.Cell0DCoordinates.begin(), IdV1);
+//             Vertici.push_back(Id1);
+//             auto nextIt = next(it);
+//             if (nextIt == insiemePoligoni[i].end()) {
+//                 nextIt = insiemePoligoni[i].begin();
+//             }
+//             Vector3d vertice2 = *nextIt;
+//             auto IdV2 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice2);
+//             int Id2 = distance(Mesh.Cell0DCoordinates.begin(), IdV2);
 
-void calcolaCelle2D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh)
-{
-    Mesh.Cell2DId.reserve(insiemePoligoni.size());
-    Mesh.Cell2DNumVertices.reserve(insiemePoligoni.size());
-    Mesh.Cell2DVertices.reserve(insiemePoligoni.size());
-    Mesh.Cell2DNumEdges.reserve(insiemePoligoni.size());
-    Mesh.Cell2DEdges.reserve(insiemePoligoni.size());
-    unsigned int Id = 0;
-    Mesh.NumberCell2D = insiemePoligoni.size();
-    for (unsigned int i = 0; i < insiemePoligoni.size(); i++)
-    {
-        Mesh.Cell2DId.push_back(Id);
-        Mesh.Cell2DNumVertices.push_back(insiemePoligoni[i].size());
-        Mesh.Cell2DNumEdges.push_back(insiemePoligoni[i].size());
-        Id += 1;
-        for (auto it = insiemePoligoni[i].begin(); it != insiemePoligoni[i].end(); ++it)
-        {
-            Vector3d vertice1 = *it;
-            auto IdV1 = find(Mesh.Cell0DCoordinates.begin(), Mesh.Cell0DCoordinates.end(), vertice1);
-            int Id1 = distance(Mesh.Cell0DCoordinates.begin(), IdV1);
-            Mesh.Cell2DVertices[i].push_back(Id1);
-        }
-    }
-}
+//             Vector2i prova1 = {Id1, Id2};
+//             Vector2i prova2 = {Id2, Id1};
+
+//             auto IdL1 = find(Mesh.Cell1DVertices.begin(), Mesh.Cell1DVertices.end(), prova1);
+//             if (IdL1 != Mesh.Cell1DVertices.end())
+//             {
+//                 unsigned int IdL = distance(Mesh.Cell1DVertices.begin(), IdL1);
+//                 Lati.push_back(IdL);
+//             }
+//             else
+//             {
+//                 auto IdL2 = find(Mesh.Cell1DVertices.begin(), Mesh.Cell1DVertices.end(), prova2);
+//                 unsigned int IdL = distance(Mesh.Cell1DVertices.begin(), IdL2);
+//                 Lati.push_back(IdL);
+//             }
+//         }
+//         Mesh.Cell2DVertices.push_back(Vertici);
+//         Mesh.Cell2DEdges.push_back(Lati);
+//     }
+// }
 
 }

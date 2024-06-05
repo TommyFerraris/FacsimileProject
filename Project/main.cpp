@@ -80,7 +80,7 @@ int main() {
     {
         cout << "Id cella 1D: " << Mesh.Cell1DId[i] << "; vertici Id: " << Mesh.Cell1DVertices[i][0] << ";" << Mesh.Cell1DVertices[i][1] << endl;
     }
-
+    // calcolaCelle2D(poligoni, Mesh);
     for (unsigned int i = 0; i < Mesh.NumberCell2D; i++)
     {
         for (unsigned int j = 0; j < Mesh.Cell2DNumVertices[i]; j++)
