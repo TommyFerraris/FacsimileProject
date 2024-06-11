@@ -12,7 +12,7 @@ struct PolygonalMesh
 {
     unsigned int NumberCell0D = 0; ///< number of Cell0D
     vector<unsigned int> Cell0DId = {}; ///< Cell0D id, size 1 x NumberCell0D
-    vector<Vector3d> Cell0DCoordinates = {}; ///< Cell0D coordinates, size 2 x NumberCell0D (x,y)
+    vector<Vector3d> Cell0DCoordinates = {}; ///< Cell0D coordinates, size 3 x NumberCell0D (x,y,z)
 
     unsigned int NumberCell1D = 0; ///< number of Cell1D
     vector<unsigned int> Cell1DId = {}; ///< Cell1D id, size 1 x NumberCell1D
