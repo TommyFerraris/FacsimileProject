@@ -464,6 +464,8 @@ bool OutputFratture(Struttura_DFN& DFN, const string& fileOutput)
         cerr << "Non riesco ad aprire il file " << fileOutput << endl;
         return false;
     }
+    file.precision(16);
+    file << scientific;
     for (unsigned int i = 0; i < DFN.numFratture; i++)
     {
         if (DFN.tipoTraccia[i].size() != 0)

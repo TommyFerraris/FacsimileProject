@@ -2,8 +2,8 @@
 #include "GeometryDFN.hpp"
 #include "Utils.hpp"
 #include "Utils2.hpp"
-#include "fstream"
-#include "Paraview/src/UCDUtilities.hpp"
+#include "UCDUtilities.hpp"
+#include "Triangolazione.hpp"
 #include <filesystem>
 
 using namespace std;
@@ -63,16 +63,52 @@ int main() {
     PolygonalMesh Mesh = calcolaCelle0D(insiemePoligoni);
     calcolaCelle1D2D(insiemePoligoni, Mesh);
     vector<vector<unsigned int>> sottoPoligoni = Mesh.Cell2DVertices;
-    MatrixXd MatricePunti;
+    MatrixXd MatricePunti (3, Mesh.NumberCell0D);
     for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
     {
         MatricePunti.col(i) = Mesh.Cell0DCoordinates[i];
     }
+    GeometryLibrary::Polygons polygons;
+    polygons.VerticesCoordinates = MatricePunti;
+    polygons.listVertices = sottoPoligoni;
     Gedim::UCDUtilities exporter;
-    ofstream ofname;
-    ofname.open("./Poligono0_FR10.inp");
-    exporter.ExportPolygons("./Poligono0_FR10.inp", MatricePunti, sottoPoligoni, {}, {}, {});
-    ofname.close();
+    std::vector<std::vector<unsigned int>> triangles;
+    Eigen::VectorXi materials;
+    polygons.GedimInterface(triangles, materials);
+    exporter.ExportPolygons("./Frattura10_1.inp",
+                            polygons.VerticesCoordinates,
+                            triangles,
+                            {},
+                            {},
+                            materials);
+
+    VectorXi materials0D(Mesh.NumberCell0D);
+    for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
+    {
+        materials0D(i) = Mesh.Cell0DId[i];
+    }
+    exporter.ExportPoints("./Frattura10_1_Celle0D.inp",
+                          MatricePunti,
+                          {},
+                          materials0D);
+
+    MatrixXi lati(2, Mesh.NumberCell1D);
+    for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
+    {
+        lati(0,i) = Mesh.Cell1DVertices[i][0];
+        lati(1,i) = Mesh.Cell1DVertices[i][1];
+    }
+    VectorXi materials1D(Mesh.NumberCell1D);
+    for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
+    {
+        materials1D(i) = Mesh.Cell1DId[i];
+    }
+    exporter.ExportSegments("./Frattura10_1_Celle1D.inp",
+                            MatricePunti,
+                            lati,
+                            {},
+                            {},
+                            materials1D);
 
     return 0;
 }

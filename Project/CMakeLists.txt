@@ -55,7 +55,7 @@ list(APPEND ${CMAKE_PROJECT_NAME}_test_sources ${src_test_sources})
 list(APPEND ${CMAKE_PROJECT_NAME}_test_headers ${src_test_headers})
 list(APPEND ${CMAKE_PROJECT_NAME}_test_includes ${src_test_includes})
 
-add_subdirectory(Paraview)
+add_subdirectory(Paraview/src)
 
 list(APPEND ${CMAKE_PROJECT_NAME}_sources ${src_paraview_sources})
 list(APPEND ${CMAKE_PROJECT_NAME}_headers ${src_paraview_headers})

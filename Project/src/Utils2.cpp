@@ -125,6 +125,7 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
                     contatore += 1;
                 }
 
+                // else if (puntoInternoPoligono(OrigineTraccia, currentPolygon))
                 else if (alphaBeta[0] >= -1e-09 && alphaBeta[0] <= 1 + 1e-09)
                 {
                     Vector3d Intersezione = vertice1 + alphaBeta[0] * (vertice2 - vertice1);
@@ -134,7 +135,7 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
 
             if (contatore != 0 && puntiIntersezione.size() == 2) {
                 array<list<Vector3d>, 2> poligoniNuovi = dividiPoligono(currentPolygon, puntiIntersezione[0], puntiIntersezione[1]);
-                currentPolygon = poligoniNuovi[0];
+                replace(vettorePoligoni.begin(), vettorePoligoni.end(), currentPolygon, poligoniNuovi[0]);
                 vettorePoligoni.push_back(poligoniNuovi[1]);
                 trovaNuoviVertici(vettorePoligoni, j, puntiIntersezione[0]);
                 trovaNuoviVertici(vettorePoligoni, j, puntiIntersezione[1]);
