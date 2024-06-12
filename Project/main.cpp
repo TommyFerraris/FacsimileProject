@@ -17,7 +17,7 @@ int main() {
     Struttura_DFN DFN;
 
     // Popola la struttura DFN con i dati necessari
-    string filename = "./FR10_data.txt";
+    string filename = "./FR362_data.txt";
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
@@ -35,8 +35,8 @@ int main() {
             return 2;
         }
     }
-    string OutputNameTraccia = "./results/Tracce_FR10.txt";
-    string OutputNameFrattura = "./results/Fratture_FR10.txt";
+    string OutputNameTraccia = "./results/Tracce_FR362.txt";
+    string OutputNameFrattura = "./results/Fratture_FR362.txt";
     if(!OutputTracce(DFN, OutputNameTraccia)){
         return 3;
     }
@@ -52,63 +52,63 @@ int main() {
             return 5;
         }
     }
-    string OutputNameMesh = "./resultsParte2/Tracce_FR10";
+    string OutputNameMesh = "./resultsParte2/Tracce_FR362";
     if (!OutputPolygonalMesh(DFN, OutputNameMesh)){
         return 6;
     }
 
     // Paraview
-    unsigned int id_frattura = 0;
-    vector<list<Vector3d>> insiemePoligoni = trovaPoligoniTotali(id_frattura, DFN);
-    PolygonalMesh Mesh = calcolaCelle0D(insiemePoligoni);
-    calcolaCelle1D2D(insiemePoligoni, Mesh);
-    vector<vector<unsigned int>> sottoPoligoni = Mesh.Cell2DVertices;
-    MatrixXd MatricePunti (3, Mesh.NumberCell0D);
-    for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
-    {
-        MatricePunti.col(i) = Mesh.Cell0DCoordinates[i];
-    }
-    GeometryLibrary::Polygons polygons;
-    polygons.VerticesCoordinates = MatricePunti;
-    polygons.listVertices = sottoPoligoni;
-    Gedim::UCDUtilities exporter;
-    std::vector<std::vector<unsigned int>> triangles;
-    Eigen::VectorXi materials;
-    polygons.GedimInterface(triangles, materials);
-    exporter.ExportPolygons("./Frattura10_1.inp",
-                            polygons.VerticesCoordinates,
-                            triangles,
-                            {},
-                            {},
-                            materials);
+    // unsigned int id_frattura = 0;
+    // vector<list<Vector3d>> insiemePoligoni = trovaPoligoniTotali(id_frattura, DFN);
+    // PolygonalMesh Mesh = calcolaCelle0D(insiemePoligoni);
+    // calcolaCelle1D2D(insiemePoligoni, Mesh);
+    // vector<vector<unsigned int>> sottoPoligoni = Mesh.Cell2DVertices;
+    // MatrixXd MatricePunti (3, Mesh.NumberCell0D);
+    // for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
+    // {
+    //     MatricePunti.col(i) = Mesh.Cell0DCoordinates[i];
+    // }
+    // GeometryLibrary::Polygons polygons;
+    // polygons.VerticesCoordinates = MatricePunti;
+    // polygons.listVertices = sottoPoligoni;
+    // Gedim::UCDUtilities exporter;
+    // std::vector<std::vector<unsigned int>> triangles;
+    // Eigen::VectorXi materials;
+    // polygons.GedimInterface(triangles, materials);
+    // exporter.ExportPolygons("./Frattura10_1.inp",
+    //                         polygons.VerticesCoordinates,
+    //                         triangles,
+    //                         {},
+    //                         {},
+    //                         materials);
 
-    VectorXi materials0D(Mesh.NumberCell0D);
-    for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
-    {
-        materials0D(i) = Mesh.Cell0DId[i];
-    }
-    exporter.ExportPoints("./Frattura10_1_Celle0D.inp",
-                          MatricePunti,
-                          {},
-                          materials0D);
+    // VectorXi materials0D(Mesh.NumberCell0D);
+    // for (unsigned int i = 0; i < Mesh.NumberCell0D; i++)
+    // {
+    //     materials0D(i) = Mesh.Cell0DId[i];
+    // }
+    // exporter.ExportPoints("./Frattura10_1_Celle0D.inp",
+    //                       MatricePunti,
+    //                       {},
+    //                       materials0D);
 
-    MatrixXi lati(2, Mesh.NumberCell1D);
-    for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
-    {
-        lati(0,i) = Mesh.Cell1DVertices[i][0];
-        lati(1,i) = Mesh.Cell1DVertices[i][1];
-    }
-    VectorXi materials1D(Mesh.NumberCell1D);
-    for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
-    {
-        materials1D(i) = Mesh.Cell1DId[i];
-    }
-    exporter.ExportSegments("./Frattura10_1_Celle1D.inp",
-                            MatricePunti,
-                            lati,
-                            {},
-                            {},
-                            materials1D);
+    // MatrixXi lati(2, Mesh.NumberCell1D);
+    // for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
+    // {
+    //     lati(0,i) = Mesh.Cell1DVertices[i][0];
+    //     lati(1,i) = Mesh.Cell1DVertices[i][1];
+    // }
+    // VectorXi materials1D(Mesh.NumberCell1D);
+    // for (unsigned int i = 0; i < Mesh.NumberCell1D; i++)
+    // {
+    //     materials1D(i) = Mesh.Cell1DId[i];
+    // }
+    // exporter.ExportSegments("./Frattura10_1_Celle1D.inp",
+    //                         MatricePunti,
+    //                         lati,
+    //                         {},
+    //                         {},
+    //                         materials1D);
 
     return 0;
 }

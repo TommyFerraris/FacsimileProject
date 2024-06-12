@@ -54,35 +54,6 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
 }
 
 
-void trovaNuoviVertici(vector<list<Vector3d>>& vettorePoligoni, const unsigned int& j, Vector3d& p)
-{
-    for (unsigned int i = 0; i < vettorePoligoni.size(); i++)
-    {
-        auto pIt = vettorePoligoni[i].end();
-        unsigned int contatore = 0;
-        if (i == j) {continue;}
-        bool completedFullCircle = false;
-        for (auto it = vettorePoligoni[i].begin(); !completedFullCircle; ++it) {
-            auto nextIt = next(it);
-            if (nextIt == vettorePoligoni[i].end()) nextIt = vettorePoligoni[i].begin();
-
-            if (puntoInSegmento(*it, *nextIt, p)) {
-                pIt = nextIt;
-                contatore += 1;
-            }
-
-            if (nextIt == vettorePoligoni[i].begin()) {
-                completedFullCircle = true;
-            }
-        }
-        if (contatore == 1)
-        {
-            vettorePoligoni[i].insert(pIt, p);
-        }
-    }
-}
-
-
 vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_DFN& DFN) {
     vector<list<Vector3d>> vettorePoligoni;
 
@@ -119,7 +90,7 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
                 Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
 
                 if (alphaBeta[0] >= -1e-09 && alphaBeta[0] <= 1 + 1e-09 &&
-                    alphaBeta[1] >= -1e-09 && alphaBeta[1] <= 1 + 1e-09) {
+                    abs(alphaBeta[1]) >= -1e-09 && abs(alphaBeta[1]) <= 1 + 1e-09) {
                     Vector3d Intersezione = vertice1 + alphaBeta[0] * (vertice2 - vertice1);
                     puntiIntersezione.push_back(Intersezione);
                     contatore += 1;
@@ -137,8 +108,6 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
                 array<list<Vector3d>, 2> poligoniNuovi = dividiPoligono(currentPolygon, puntiIntersezione[0], puntiIntersezione[1]);
                 replace(vettorePoligoni.begin(), vettorePoligoni.end(), currentPolygon, poligoniNuovi[0]);
                 vettorePoligoni.push_back(poligoniNuovi[1]);
-                trovaNuoviVertici(vettorePoligoni, j, puntiIntersezione[0]);
-                trovaNuoviVertici(vettorePoligoni, j, puntiIntersezione[1]);
             }
         }
     }
