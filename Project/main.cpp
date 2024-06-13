@@ -2,8 +2,8 @@
 #include "GeometryDFN.hpp"
 #include "Utils.hpp"
 #include "Utils2.hpp"
-#include "UCDUtilities.hpp"
-#include "Triangolazione.hpp"
+// #include "UCDUtilities.hpp"
+// #include "Triangolazione.hpp"
 #include <filesystem>
 
 using namespace std;
@@ -17,7 +17,7 @@ int main() {
     Struttura_DFN DFN;
 
     // Popola la struttura DFN con i dati necessari
-    string filename = "./FR362_data.txt";
+    string filename = "./FR50_data.txt";
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
@@ -35,8 +35,8 @@ int main() {
             return 2;
         }
     }
-    string OutputNameTraccia = "./results/Tracce_FR362.txt";
-    string OutputNameFrattura = "./results/Fratture_FR362.txt";
+    string OutputNameTraccia = "./results/Tracce_FR50.txt";
+    string OutputNameFrattura = "./results/Fratture_FR50.txt";
     if(!OutputTracce(DFN, OutputNameTraccia)){
         return 3;
     }
@@ -52,13 +52,13 @@ int main() {
             return 5;
         }
     }
-    string OutputNameMesh = "./resultsParte2/Tracce_FR362";
+    string OutputNameMesh = "./resultsParte2/Tracce_FR50";
     if (!OutputPolygonalMesh(DFN, OutputNameMesh)){
         return 6;
     }
 
     // Paraview
-    // unsigned int id_frattura = 0;
+    // unsigned int id_frattura = 1;
     // vector<list<Vector3d>> insiemePoligoni = trovaPoligoniTotali(id_frattura, DFN);
     // PolygonalMesh Mesh = calcolaCelle0D(insiemePoligoni);
     // calcolaCelle1D2D(insiemePoligoni, Mesh);
@@ -75,7 +75,7 @@ int main() {
     // std::vector<std::vector<unsigned int>> triangles;
     // Eigen::VectorXi materials;
     // polygons.GedimInterface(triangles, materials);
-    // exporter.ExportPolygons("./Frattura10_1.inp",
+    // exporter.ExportPolygons("./Frattura50_1.inp",
     //                         polygons.VerticesCoordinates,
     //                         triangles,
     //                         {},
@@ -87,7 +87,7 @@ int main() {
     // {
     //     materials0D(i) = Mesh.Cell0DId[i];
     // }
-    // exporter.ExportPoints("./Frattura10_1_Celle0D.inp",
+    // exporter.ExportPoints("./Frattura50_1_Celle0D.inp",
     //                       MatricePunti,
     //                       {},
     //                       materials0D);
@@ -103,7 +103,7 @@ int main() {
     // {
     //     materials1D(i) = Mesh.Cell1DId[i];
     // }
-    // exporter.ExportSegments("./Frattura10_1_Celle1D.inp",
+    // exporter.ExportSegments("./Frattura50_1_Celle1D.inp",
     //                         MatricePunti,
     //                         lati,
     //                         {},
