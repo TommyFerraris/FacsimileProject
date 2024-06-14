@@ -2,8 +2,10 @@
 
 #include <fstream>
 
+// funzioni che permettono di triangolare i poligoni di una mesh per poterla visualizzare con Paraview
+
 namespace GeometryLibrary{
-//*********************************************************
+
 vector<vector<vector<unsigned int>>> Polygons::TriangulatePolygons()
 {
     const unsigned int numPolygons = listVertices.size();

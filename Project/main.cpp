@@ -2,8 +2,8 @@
 #include "GeometryDFN.hpp"
 #include "Utils.hpp"
 #include "Utils2.hpp"
-// #include "UCDUtilities.hpp"
-// #include "Triangolazione.hpp"
+// #include "UCDUtilities.hpp"       //da scommentare se si vuole stampare in paraview
+// #include "Triangolazione.hpp"     //da scommentare se si vuole stampare in paraview
 #include <filesystem>
 
 using namespace std;
@@ -27,7 +27,7 @@ int main() {
     calcolaTipologiaTracce(DFN);
     calcolaLunghezzaTracce(DFN);
 
-    // Funzioni che mi salvino i risultati in file .txt
+    // Funzioni che mi salvano i risultati in file .txt
     string directory = "results";
     if (!filesystem::exists(directory)) {
         if (!filesystem::create_directory(directory)) {
@@ -44,7 +44,7 @@ int main() {
         return 4;
     }
 
-    // Funzioni che mi salvino i risultati in file .txt
+    // Funzioni che salvano i risultati in un file .txt
     string directory2 = "resultsParte2";
     if (!filesystem::exists(directory2)) {
         if (!filesystem::create_directory(directory2)) {
@@ -57,7 +57,8 @@ int main() {
         return 6;
     }
 
-    // Paraview
+    // Paraview (per visualizzare esempi di alcune mesh)
+
     // unsigned int id_frattura = 1;
     // vector<list<Vector3d>> insiemePoligoni = trovaPoligoniTotali(id_frattura, DFN);
     // PolygonalMesh Mesh = calcolaCelle0D(insiemePoligoni);

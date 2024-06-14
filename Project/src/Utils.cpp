@@ -127,7 +127,7 @@ bool possibiliTracce(const vector<Vector3d>& poligono1, const vector<Vector3d>& 
     Vector3d centroide2 = calcolaCentroide(poligono2);
 
     double distanzaMax1 = 0;
-    for (unsigned int j = 0; j < poligono1.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
+    for (unsigned int j = 0; j < poligono1.size(); j++) // scorro tutti i vertici di poligono1
     {
         double distanza = (poligono1[j] - centroide1).squaredNorm();
         if (distanza > distanzaMax1)
@@ -137,7 +137,7 @@ bool possibiliTracce(const vector<Vector3d>& poligono1, const vector<Vector3d>& 
     }
 
     double distanzaMax2 = 0;
-    for (unsigned int j = 0; j < poligono2.size(); j++) // Modificato per scorrere tutti i vertici di poligono1
+    for (unsigned int j = 0; j < poligono2.size(); j++) // scorro tutti i vertici di poligono2
     {
         double distanza = (poligono2[j] - centroide2).squaredNorm();
         if (distanza > distanzaMax2)
@@ -154,7 +154,7 @@ bool possibiliTracce(const vector<Vector3d>& poligono1, const vector<Vector3d>& 
         return true; // Modificato per uscire dalla funzione in caso di fratture vicine a sufficienza
         // Se viene superato questo controllo posso procedere con il sistema lineare che mi calcoli le fratture
     }
-    return false; // Modificato per indicare se le fratture sono troppo distanti
+    return false;
 }
 
 
@@ -202,12 +202,12 @@ void calcolaTracce(Struttura_DFN& DFN)
 
                 unsigned int numPuntiTracce = 0;
                 array<Vector3d,2> puntiTraccia;
-                for(unsigned int k = 0; k < DFN.numVertici[i]; k++)
+                for(unsigned int k = 0; k < DFN.numVertici[i]; k++) //ciclo sulla prima frattura
                 {
                     Vector3d vertice1 = DFN.coordinateVertici[i][k];
                     Vector3d vertice2 = DFN.coordinateVertici[i][(k + 1) % DFN.numVertici[i]];
 
-                    MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
+                    MatrixXd MatriceA1(3,2);
                     MatriceA1.col(0) = (vertice2-vertice1);
                     MatriceA1.col(1) = versoreTangente;
                     if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-12)
@@ -218,6 +218,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     Vector3d b1 = (puntoTraccia - vertice1);
 
                     Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
+                    //controllo che il punto di intersezione sia da considerare o esludere
                     if (alphaBeta[0] < 1 + 1e-09 && alphaBeta[0] > -1e-09 && numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
@@ -241,11 +242,11 @@ void calcolaTracce(Struttura_DFN& DFN)
                     }
                 }
 
-                for(unsigned int k = 0; k < DFN.numVertici[j]; k++)
+                for(unsigned int k = 0; k < DFN.numVertici[j]; k++) //ciclo sulla seconda Frattura
                 {
                     Vector3d vertice1 = DFN.coordinateVertici[j][k];
                     Vector3d vertice2 = DFN.coordinateVertici[j][(k + 1) % DFN.numVertici[j]];
-                    MatrixXd MatriceA1(3,2); // deve diventare matrice 3x2
+                    MatrixXd MatriceA1(3,2);
                     MatriceA1.col(0) = (vertice2-vertice1);
                     MatriceA1.col(1) = versoreTangente;
                     if ((vertice2-vertice1).cross(versoreTangente).squaredNorm() < 1e-09)
@@ -256,6 +257,7 @@ void calcolaTracce(Struttura_DFN& DFN)
                     Vector3d b1 = (puntoTraccia - vertice1);
 
                     Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
+                    //controllo che il punto di intersezione sia da considerare o esludere
                     if (alphaBeta[0] < 1 + 1e-09 && alphaBeta[0] > -1e-09 && numPuntiTracce < 2)
                     {
                         Vector3d Intersezione = vertice1 + (alphaBeta[0] * (vertice2 - vertice1));
@@ -306,6 +308,7 @@ bool puntointriangolo(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3
 
 bool puntoInternoPoligono(const Vector3d& punto, vector<Vector3d>& poligono)
 {
+    // sfrutto la funzione precedente puntointriangolo ciclando sui vertici del poligono
     for (unsigned int i = 1; i< poligono.size()-1; ++i)
     {
         if (puntointriangolo(punto, poligono[0], poligono[i], poligono[i+1]))
@@ -318,7 +321,8 @@ bool puntoInternoPoligono(const Vector3d& punto, vector<Vector3d>& poligono)
 bool puntoInSegmento(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3)
 {
     Vector3d prodotto_Vettoriale = (p2-p1).cross(p3-p1);
-    // Controllo se punti collineari
+    // Controllo se il punto p3 è sulla stessa retta dei punti p1 e p2 che rappresentano due vertici consecutivi della Frattura
+    // Ovvero controllo che i tre punti siano collineari
     if (fabs(prodotto_Vettoriale[0]) < 1e-12 && fabs(prodotto_Vettoriale[1]) < 1e-12 && fabs(prodotto_Vettoriale[2]) < 1e-12)
     {
         return ((p3[0] >= min(p1[0], p2[0]) && p3[0] <= max(p1[0], p2[0]) &&
@@ -332,10 +336,10 @@ bool puntoInSegmento(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3)
 void calcolaTipologiaTracce(Struttura_DFN& DFN)
 {
     DFN.Id_FrattureConTraccia.reserve(DFN.numFratture);
-    for (unsigned int k = 0; k < DFN.numFratture; k++)
+    for (unsigned int k = 0; k < DFN.numFratture; k++) //ciclo sulle Fratture
     {
         unsigned int contatore = 0;
-        for (unsigned int i = 0; i < DFN.numTracce; i++)
+        for (unsigned int i = 0; i < DFN.numTracce; i++) //ciclo sulle tracce
         {
             int idFrattura = k;
             if (idFrattura == DFN.Id_Fratture_Intersecanti[i][0] || idFrattura == DFN.Id_Fratture_Intersecanti[i][1])
@@ -384,7 +388,7 @@ vector<Vector2i> riordinaTracce(const vector<double>& lunghezza, const vector<Ve
     {
         coppieIdLunghezza.push_back({lunghezza[i], i});
     }
-    SortLibrary::MergeSort(coppieIdLunghezza);
+    SortLibrary::MergeSort(coppieIdLunghezza); // Utilizzo MergeSort definito nella libreria SortLibrary per ordinare in senso decrescente
 
     vector<Vector2i> tipoRiordinatoPassante;
     vector<Vector2i> tipoRiordinatoNonPassante;
@@ -394,17 +398,17 @@ vector<Vector2i> riordinaTracce(const vector<double>& lunghezza, const vector<Ve
         {
             if (tipo[i][1] == false && tipo[i][0] == coppieIdLunghezza[j].second)
             {
-                tipoRiordinatoPassante.push_back(tipo[i]);
+                tipoRiordinatoPassante.push_back(tipo[i]);  //inserisco le tracce passanti in TipoRiordinatoPassante
                 break;
             }
             else if (tipo[i][1] == true && tipo[i][0] == coppieIdLunghezza[j].second)
             {
-                tipoRiordinatoNonPassante.push_back(tipo[i]);
+                tipoRiordinatoNonPassante.push_back(tipo[i]); //memorizzo le Tracce non passanti in TipoRiordinatoNonPassante
                 break;
             }
         }
     }
-
+    // inserisco in tipoRiordinato prima le Tracce passanti e poi le non passanti
     vector<Vector2i> tipoRiordinato;
     for(unsigned int i = 0; i < tipoRiordinatoPassante.size(); i++)
     {tipoRiordinato.push_back(tipoRiordinatoPassante[i]);}
@@ -419,8 +423,8 @@ void calcolaLunghezzaTracce(Struttura_DFN& DFN)
     DFN.lunghezzaTraccia.reserve(DFN.numTracce);
     for (unsigned int i = 0; i < DFN.numTracce; i++)
     {
-        double lunghezza = (DFN.coordinateTraccia[i][1] - DFN.coordinateTraccia[i][0]).norm();
-        DFN.lunghezzaTraccia.push_back(lunghezza);
+        double lunghezza = (DFN.coordinateTraccia[i][1] - DFN.coordinateTraccia[i][0]).norm(); // calcolo lunghezza della Traccia
+        DFN.lunghezzaTraccia.push_back(lunghezza);  //inserisco la lunghezza ottenuta in lunghezzaTraccia
     }
     for (unsigned int i = 0; i < DFN.tipoTraccia.size(); i++)
     {

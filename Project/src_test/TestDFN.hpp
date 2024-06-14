@@ -49,7 +49,7 @@ TEST(CalcolaCentroideTest, poligono6Vertici) {
     ASSERT_EQ(calcolaCentroide(poligono3), risultato3);
 }
 
-// Test sulla funzione che calcola se due fratture sono sufficientemente vicine affinché si possano intersecare
+// Test sulla funzione che controlla se due fratture sono sufficientemente vicine affinché si possano intersecare
 TEST(possibiliTracceTest, Poligonivicini){
     vector<Vector3d> poligono1 = {
         Vector3d(1, 0, 0),
@@ -104,7 +104,7 @@ TEST(NormalePoligonoTest, PoligonoPianoXZ) {
     ASSERT_EQ(normalePoligono(poligono), normale);
 }
 
-// Test per controllo della funzione che controlla se un punto è interno o meno ad un poligono
+// Test per controllare se un punto è interno o meno ad un poligono
 TEST(PuntoInternoPoligonoTest, PoligonoPianoXY){
     vector<Vector3d> poligono = {
         Vector3d(0, 0, 0),
@@ -159,7 +159,7 @@ TEST(PuntoInternoTriangoloTest, TriangoloYZ){
     ASSERT_TRUE(puntointriangolo(p1, p2, p3, p4));
 }
 
-// Test sulla funzione che controlla se tre punti siano collineari e controlla che il punto p3 appartenga al segmento generato dai punti p1 e p2
+// Test per controllare se tre punti siano collineari (controlla che il punto p3 appartenga al segmento generato dai punti p1 e p2)
 TEST(PuntoInSegmentoTest, TestTrue){
     Vector3d p1(0, 0, 0);
     Vector3d p2(1, 1, 1);
@@ -213,7 +213,7 @@ TEST(RiordinaTracceTest, TestUgualeLunghezzaTipoDiverso){
     }
 }
 
-// Test per calcolare lunghezza tracce
+// Test per calcolare la lunghezza delle Tracce
 TEST(CalcolaLunghezzaTracceTest, TestBase) {
     Struttura_DFN DFN;
     DFN.numTracce = 2;
@@ -241,7 +241,7 @@ TEST(CalcolaLunghezzaTracceTest, TestLunghezzaNulla) {
     EXPECT_DOUBLE_EQ(DFN.lunghezzaTraccia[1], 5.0);
 }
 
-// Funzione che testi se calcolo in maniera correta la tipologia delle tracce e la salvo
+// Test sul calcolo in maniera correta della tipologia delle tracce e la salvo
 TEST(CalcolaTipologiaTracceTest, FunzioneBase) {
     Struttura_DFN DFN;
     DFN.numFratture = 2;
@@ -315,7 +315,7 @@ TEST(CalcolaTipologiaTracceTest, FunzioneConPassante) {
     }
 }
 
-
+// Test per il calcolo delle Tracce tra due Fratture
 TEST(CalcolaTracceTest, casoBase) {
     Struttura_DFN DFN;
     DFN.numFratture = 2;
@@ -355,7 +355,7 @@ TEST(CalcolaTracceTest, CasoTracciaPiccola) {
     EXPECT_EQ(DFN.coordinateTraccia[0], coordinateTraccia);
 }
 
-
+// Test sulla divisione di un poligono in sottopoligoni definiti dalle Tracce
 TEST(TrovaPoligoniTotaliTest, TestPassante) {
     Struttura_DFN DFN;
 
@@ -421,7 +421,7 @@ TEST(TrovaPoligoniTotaliTest, TestNonpassante) {
     }
 }
 
-
+// Test sul calcolo delle celle Od della mesh
 TEST(CalcolaCelle0DTest, casoBase) {
     vector<list<Vector3d>> insiemePoligoni = {
         {Vector3d(0, 0, 0), Vector3d(1, 0, 0), Vector3d(1, 1, 0), Vector3d(0, 1, 0)},
@@ -449,7 +449,7 @@ TEST(CalcolaCelle0DTest, casoBase) {
     }
 }
 
-
+// Test sul calcolo delle celle 1D e 2D della mesh
 TEST(CalcolaCelle1D2DTest, casoBase) {
     vector<list<Vector3d>> insiemePoligoni = {
         {Vector3d(0, 0, 0), Vector3d(1, 0, 0), Vector3d(1, 1, 0), Vector3d(0, 1, 0)},

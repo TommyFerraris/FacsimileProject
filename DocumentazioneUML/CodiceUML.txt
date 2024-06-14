@@ -1,0 +1,76 @@
+' Struttura del DFN
+
+@startuml
+namespace DFN_Library {
+    struct Struttura_DFN {
+        + unsigned int numFratture = 0                               
+        + vector<unsigned int> Id_Fratture                           
+        + vector<unsigned int> numVertici                            
+        + map<unsigned int, vector<Vector3d>> coordinateVertici        // Chiave: Id_fratture
+        
+        + unsigned int numTracce = 0                                 
+        + vector<unsigned int> Id_Traccia                            
+        + vector<Vector2i> Id_Fratture_Intersecanti                  
+        + map<unsigned int, array<Vector3d, 2>> coordinateTraccia    // Chiave: Id_traccia
+        + vector<double> lunghezzaTraccia                            
+        + map<unsigned int, vector<Vector2i>> tipoTraccia                   // Chiave: Id_Fratture
+        + vector<unsigned int> Id_FrattureConTraccia                 
+    }
+}
+
+package MergeSort <<Frame>>
+{
+}
+
+note "MergeSort è una libreria esterna" as Merge
+Merge.. MergeSort
+
+MergeSort..> Struttura_DFN::tipoTraccia
+
+@enduml
+
+
+' -----------------------------------------------------------------------
+' struttura della mesh
+
+@startuml
+namespace DFN_PolygonalLibrary {
+    struct PolygonalMesh {
+        // Per ogni cella 0D: memorizzo identificativo e coordinate 3D
+        + unsigned int NumberCell0D = 0
+        + vector<unsigned int> Cell0DId 
+        + vector<Vector3d> Cell0DCoordinates 
+
+        // Per ogni cella 1D: memorizzo identificativo e Vertici
+        + unsigned int NumberCell1D = 0
+        + vector<unsigned int> Cell1DId 
+        + vector<Vector2i> Cell1DVertices 
+
+        // Per ogni cella 2D: memorizzo identificativo, numero di vertici e lati e loro coordinate
+        + unsigned int NumberCell2D = 0 
+        + vector<unsigned int> Cell2DId 
+        + vector<unsigned int> Cell2DNumVertices 
+        + vector<vector<unsigned int>> Cell2DVertices 
+        + vector<unsigned int> Cell2DNumEdges 
+        + vector<vector<unsigned int>> Cell2DEdges 
+    }
+}
+
+package Eigen <<Frame>>
+{
+}
+
+note "Eigen è una libreria esterna" as EigenL
+EigenL.. Eigen
+
+Eigen..> PolygonalMesh
+
+package Eigen <<Frame>>
+{
+}
+
+note "Eigen è una libreria esterna" as EigenL
+EigenL.. Eigen
+
+Eigen..> Struttura_DFN
+@enduml

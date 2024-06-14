@@ -17,7 +17,7 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
     auto p1It = poligono.end();
     auto p2It = poligono.end();
 
-    // Find positions of p1 and p2
+    // Trovo la posizione di p1 e p2
     for (auto it = poligono.begin(); it != poligono.end(); ++it) {
         auto nextIt = next(it);
         if (nextIt == poligono.end()) nextIt = poligono.begin();
@@ -29,10 +29,10 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
             p2It = it;
         }
     }
-    // Create two new polygons
+    // Creo due nuovi poligoni
     list<Vector3d> poligono1, poligono2;
 
-    // Fill poligono1
+    // Riempio il poligono1
     poligono1.push_back(p2);
     for (auto it = (p2It); it != (p1It);) {
         it = next(it);
@@ -41,7 +41,7 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
     }
     poligono1.push_back(p1);
 
-    // Fill poligono2
+    // Riempio il poligono2
     poligono2.push_back(p1);
     for (auto it = p1It; it != p2It;) {
         it = next(it);
@@ -50,7 +50,7 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
     }
     poligono2.push_back(p2);
 
-    return {poligono1, poligono2};
+    return {poligono1, poligono2};  //Restituisco i due nuovi poligoni creati
 }
 
 bool puntoInternoPoligonoLista(const Vector3d& punto, const std::list<Vector3d>& poligono)
@@ -69,15 +69,17 @@ bool puntoInternoPoligonoLista(const Vector3d& punto, const std::list<Vector3d>&
 
     return false;
 }
+
 vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_DFN& DFN) {
     vector<list<Vector3d>> vettorePoligoni;
 
-    // Convert vector<Vector3d> to list<Vector3d>
+    // Converto vector<Vector3d> in list<Vector3d>
     list<Vector3d> poligono(DFN.coordinateVertici[Idpoligono].begin(), DFN.coordinateVertici[Idpoligono].end());
     vettorePoligoni.push_back(poligono);
 
     for (unsigned int i = 0; i < DFN.tipoTraccia[Idpoligono].size(); i++) {
         unsigned int grandezza = vettorePoligoni.size();
+        // informazioni della Traccia
         Vector3d OrigineTraccia = DFN.coordinateTraccia[DFN.tipoTraccia[Idpoligono][i][0]][0];
         Vector3d FineTraccia = DFN.coordinateTraccia[DFN.tipoTraccia[Idpoligono][i][0]][1];
 
@@ -107,12 +109,14 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
                 Vector3d b1 = (OrigineTraccia - vertice1);
                 Vector2d alphaBeta = MatriceA1.colPivHouseholderQr().solve(b1);
 
+                // se la Traccia tocca il lato del poligono entro nell'if
                 if (alphaBeta[0] >= -1e-09 && alphaBeta[0] <= 1 + 1e-09 &&
                     abs(alphaBeta[1]) >= -1e-09 && abs(alphaBeta[1]) <= 1 + 1e-09) {
                     Vector3d Intersezione = vertice1 + alphaBeta[0] * (vertice2 - vertice1);
                     puntiIntersezione.push_back(Intersezione);
                     contatore += 1;
                 }
+                //entro nell'else if se la traccia non tocca il lato del poligono e quindi devo allungarla
                 else if (alphaBeta[0] >= -1e-09 && alphaBeta[0] <= 1 + 1e-09)
                 {
                     Vector3d Intersezione = vertice1 + alphaBeta[0] * (vertice2 - vertice1);
