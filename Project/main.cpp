@@ -17,7 +17,7 @@ int main() {
     Struttura_DFN DFN;
 
     // Popola la struttura DFN con i dati necessari
-    string filename = "./FR50_data.txt";
+    string filename = "./FR10_data.txt";
     if(!ImportFratture(filename, DFN)){
         return 1;
     }
@@ -35,8 +35,8 @@ int main() {
             return 2;
         }
     }
-    string OutputNameTraccia = "./results/Tracce_FR50.txt";
-    string OutputNameFrattura = "./results/Fratture_FR50.txt";
+    string OutputNameTraccia = "./results/Tracce_FR10.txt";
+    string OutputNameFrattura = "./results/Fratture_FR10.txt";
     if(!OutputTracce(DFN, OutputNameTraccia)){
         return 3;
     }
@@ -52,7 +52,7 @@ int main() {
             return 5;
         }
     }
-    string OutputNameMesh = "./resultsParte2/Tracce_FR50";
+    string OutputNameMesh = "./resultsParte2/Tracce_FR10";
     if (!OutputPolygonalMesh(DFN, OutputNameMesh)){
         return 6;
     }

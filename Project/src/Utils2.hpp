@@ -18,4 +18,6 @@ PolygonalMesh calcolaCelle0D(vector<list<Vector3d>>& insiemePoligoni);
 void calcolaCelle1D2D(vector<list<Vector3d>>& insiemePoligoni, PolygonalMesh& Mesh);
 // Funzione che mi stampi in un file il risultato finale
 bool OutputPolygonalMesh(Struttura_DFN& DFN, const string& fileOutput);
+// Funzione che controlli se punto in poligono
+bool puntoInternoPoligonoLista(const Vector3d& punto, const std::list<Vector3d>& poligono);
 }

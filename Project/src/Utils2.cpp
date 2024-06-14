@@ -53,7 +53,22 @@ array<list<Vector3d>, 2> dividiPoligono(list<Vector3d>& poligono, const Vector3d
     return {poligono1, poligono2};
 }
 
+bool puntoInternoPoligonoLista(const Vector3d& punto, const std::list<Vector3d>& poligono)
+{
+    auto it = poligono.begin();
+    Vector3d primoVertice = *it;  // Primo vertice del poligono
+    ++it;  // Avanza al secondo vertice
 
+    for (auto prev = it, next = std::next(it); next != poligono.end(); ++prev, ++next)
+    {
+        if (puntointriangolo(punto, primoVertice, *prev, *next))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_DFN& DFN) {
     vector<list<Vector3d>> vettorePoligoni;
 
@@ -70,7 +85,10 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
             list<Vector3d>& currentPolygon = vettorePoligoni[j];
             vector<Vector3d> puntiIntersezione;
             unsigned int contatore = 0;
-
+            if (puntoInternoPoligonoLista(OrigineTraccia, currentPolygon) && puntoInternoPoligonoLista(FineTraccia, currentPolygon))
+            {
+                contatore += 1;
+            }
             for (auto it = currentPolygon.begin(); it != currentPolygon.end(); ++it) {
                 auto nextIt = next(it);
                 if (nextIt == currentPolygon.end()) nextIt = currentPolygon.begin();
@@ -95,8 +113,6 @@ vector<list<Vector3d>> trovaPoligoniTotali(unsigned int& Idpoligono, Struttura_D
                     puntiIntersezione.push_back(Intersezione);
                     contatore += 1;
                 }
-
-                // else if (puntoInternoPoligono(OrigineTraccia, currentPolygon))
                 else if (alphaBeta[0] >= -1e-09 && alphaBeta[0] <= 1 + 1e-09)
                 {
                     Vector3d Intersezione = vertice1 + alphaBeta[0] * (vertice2 - vertice1);
